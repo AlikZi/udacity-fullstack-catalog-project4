@@ -1,0 +1,14 @@
+{% extends 'index.html' %} {% block content %}
+<div class="card-columns col-md-9 mt-5">
+  {% for product in products %}
+  <div class="card">
+    <img class="card-img-top img-fluid" src="{{ product.image_url }}" alt="" />
+    <div class="card-body">
+      <h4 class="card-title">{{ product.name }}</h4>
+      <a href="#" class="btn btn-outline-success">Learn More</a>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+{% endblock %}

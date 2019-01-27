@@ -29,6 +29,13 @@ def showCategories():
 	categories = session.query(Category).all()
 	return render_template('index.html', categories=categories)
 
+@app.route('/categories/<int:cat_id>/')
+def showCategoryProcucts(cat_id):
+	categories = session.query(Category).all()
+	category = session.query(Category).filter_by(id=cat_id).one()
+	products = session.query(Product).filter_by(category_id=category.id).all()
+	return render_template('category.html', products=products, categories=categories)
+
 
 
 
