@@ -47,7 +47,7 @@ session.commit()
 
 product3 = Product(name = "Mattress", 
                    description = "Natural materials like natural latex, coconut fiber, cotton and wool provide comfort and pull away moisture. This makes for a pleasant sleeping environment with a cool and even sleep temperature.",
-                   image_url = "https://www.ikea.com/us/en/images/products/hemnes-bed-frame__0555084_PE660120_S4.JPG",
+                   image_url = "https://www.ikea.com/us/en/images/products/holmsbu-pillowtop-mattress-white__0461385_PE607520_S4.JPG",
                    product_url = "https://www.ikea.com/us/en/catalog/products/90386093/",
                    category_id = category1.id)
 
@@ -109,7 +109,7 @@ session.commit()
 
 product9 = Product(name = "TV unit", 
                    description = "The TV bench in walnut veneer with legs of solid ash brings a warm, natural feeling to your room.",
-                   image_url = "The TV bench in walnut veneer with legs of solid ash brings a warm, natural feeling to your room.",
+                   image_url = "https://www.ikea.com/us/en/images/products/hemnes-tv-unit__0625361_PE692211_S4.JPG",
                    product_url = "https://www.ikea.com/us/en/catalog/products/60239715/",
                    category_id = category2.id)
 session.add(product9)

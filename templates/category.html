@@ -1,17 +1,23 @@
 {% extends 'index.html' %} {% block content %}
 <div class="col-md-9 mt-5">
   <h2>{{ category.name }} items</h2>
-  <div class="card-columns">
+  <div class="row">
     {% for product in products %}
-    <div class="card">
-      <img
-        class="card-img-top img-fluid"
-        src="{{ product.image_url }}"
-        alt=""
-      />
-      <div class="card-body">
-        <h4 class="card-title">{{ product.name }}</h4>
-        <a href="#" class="btn btn-outline-success">Learn More</a>
+    <div class="col-sm-6 col-lg-4 mb-4">
+      <div class="card">
+        <img
+          class="card-img-top img-fluid"
+          src="{{ product.image_url }}"
+          alt=""
+        />
+        <div class="card-body">
+          <h4 class="card-title">{{ product.name }}</h4>
+          <a
+            href="{{url_for('showProduct', cat_id=category.id, prod_id=product.id )}}"
+            class="btn btn-outline-success"
+            >Learn More</a
+          >
+        </div>
       </div>
     </div>
     {% endfor %}

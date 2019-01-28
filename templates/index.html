@@ -16,7 +16,6 @@
       integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
       crossorigin="anonymous"
     />
-    <link rel="stylesheet" href=".." />
     <title>Full Stack Project 4</title>
   </head>
   <body>
@@ -57,14 +56,18 @@
     <main class="mt-5">
       <div class="container">
         <div class="row">
-          <ul class="list-group mt-5 col-md-3 p-1">
-            {% for category in categories %}
-            <a href="#" class="list-group-item text-success">{{
-              category.name
-            }}</a>
-            {% endfor %}
-          </ul>
-
+          <div class="mt-5 col-md-3">
+            <h2>Categories</h2>
+            <ul class="list-group">
+              {% for category in categories %}
+              <a
+                href="{{url_for('showCategoryProducts', cat_id=category.id) }}"
+                class="list-group-item text-success"
+                >{{ category.name }}</a
+              >
+              {% endfor %}
+            </ul>
+          </div>
           {% block content %} {% endblock %}
         </div>
       </div>
