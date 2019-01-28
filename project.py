@@ -34,7 +34,7 @@ def showCategoryProcucts(cat_id):
 	categories = session.query(Category).all()
 	category = session.query(Category).filter_by(id=cat_id).one()
 	products = session.query(Product).filter_by(category_id=category.id).all()
-	return render_template('category.html', products=products, categories=categories)
+	return render_template('category.html', products=products, categories=categories, category=category)
 
 
 

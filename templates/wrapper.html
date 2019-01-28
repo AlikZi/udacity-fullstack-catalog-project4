@@ -25,7 +25,9 @@
       class="navbar navbar-expand-md bg-light text-dark navbar-light fixed-top"
     >
       <div class="container">
-        <a href="/categories" class="navbar-brand"> Furniture Catalog </a>
+        <a href="/categories" class="navbar-brand"
+          ><i class="fas fa-couch"></i> Furniture Catalog
+        </a>
         <button
           class="navbar-toggler"
           data-toggle="collapse"
@@ -53,7 +55,16 @@
     </nav>
 
     <main class="mt-5">
-      <div class="container">{% block content %} {% endblock %}</div>
+      <div class="container">
+        <div class="row">
+          <ul class="list-group mt-5 col-sm-3 p-1">
+            {% for category in categories %}
+            <a href="#" class="list-group-item">{{ category.name }}</a>
+            {% endfor %}
+          </ul>
+        </div>
+        {% block content %} {% endblock %}
+      </div>
     </main>
     <!-- jQuery, Bootstrap and Popper libraries -->
     <script
