@@ -1,4 +1,5 @@
-from sqlalchemy import Column, ForeignKey, Integer, String
+import datetime
+from sqlalchemy import Column, ForeignKey, Integer, String, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy import create_engine
@@ -38,6 +39,7 @@ class Product(Base):
     description = Column(String(250))
     image_url = Column(String(250))
     product_url = Column(String(250))
+    created_date = Column(DateTime, default=datetime.datetime.utcnow)
     category_id = Column(Integer,ForeignKey('category.id'))
     category = relationship(Category, backref=backref("items", cascade="all,delete"))
     

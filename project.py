@@ -42,15 +42,16 @@ def showLogin():
 @app.route('/categories/')
 def showCategories():
 	isLogin = False
-	if 'username' in login_session:
+	if 'email' in login_session:
 		isLogin = True
 	categories = session.query(Category).all()
-	return render_template('index.html', categories=categories, isLogin=isLogin)
+	latestProducts = session.query(Product).order_by(Product.created_date.desc()).limit(8)
+	return render_template('index.html', categories=categories, isLogin=isLogin, latestProducts=latestProducts)
 
 @app.route('/categories/<int:cat_id>/')
 def showCategoryProducts(cat_id):
 	isLogin = False
-	if 'username' in login_session:
+	if 'email' in login_session:
 		isLogin = True
 	categories = session.query(Category).all()
 	category = session.query(Category).filter_by(id=cat_id).one()
@@ -61,8 +62,9 @@ def showCategoryProducts(cat_id):
 @app.route('/categories/<int:cat_id>/<int:prod_id>/')
 def showProduct(cat_id, prod_id):
 	isLogin = False
-	if 'username' in login_session:
+	if 'email' in login_session:
 		isLogin = True
+
 	categories = session.query(Category).all()
 	category = session.query(Category).filter_by(id=cat_id).one()
 	product = session.query(Product).filter_by(id=prod_id).one()
