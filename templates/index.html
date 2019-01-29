@@ -15,7 +15,7 @@
           {% for product in latestProducts %}
           <tr>
             <td class="align-middle">{{ product.name }}</td>
-            <td class="align-middle">{{ product.category.name }}</td>
+            <td class="align-middle text-muted">{{ product.category.name }}</td>
             <td>
               <a
                 href="{{url_for('showProduct', cat_id=product.category.id, prod_id=product.id )}}"

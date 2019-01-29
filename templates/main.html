@@ -41,10 +41,10 @@
               <a href="/categories" class="nav-link">Home</a>
             </li>
             <li class="nav-item">
-              <a href="#" class="nav-link">Add Category</a>
+              <a href="/addcategory" class="nav-link">Add Category</a>
             </li>
             <li class="nav-item">
-              <a href="#" class="nav-link">Add Product</a>
+              <a href="/addproduct" class="nav-link">Add Product</a>
             </li>
             <li class="nav-item btn btn-outline-danger">
               <a href="/gdisconnect" class="nav-link">Log Out</a>
@@ -67,7 +67,12 @@
     <div class="container text-dark" style="margin-top:100px;">
       {% with messages = get_flashed_messages() %} {% if messages %} {% for
       message in messages %}
-      <p class="alert alert-info align-self-center">{{ message }}</p>
+      <div class="alert alert-info alert-dismissable">
+        <button class="close" type="button" data-dismiss="alert">
+          <span>&times;</span>
+        </button>
+        {{ message }}
+      </div>
       {% endfor %} {% endif %} {% endwith %}
     </div>
 

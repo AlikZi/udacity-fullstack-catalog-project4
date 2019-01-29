@@ -72,6 +72,48 @@ def showProduct(cat_id, prod_id):
 	                        category=category, product=product,  isLogin=isLogin)
 
 
+# Add new Category to the Category Table
+@app.route('/addcategory/', methods=['GET', 'POST'])
+def addCategory():
+	if 'email' not in login_session:
+		return redirect('/login')
+	isLogin = False
+	if 'email' in login_session:
+		isLogin = True
+	categories = session.query(Category).all()
+	if request.method == 'POST':
+		newCategory = Category(name=request.form['name'])
+		session.add(newCategory)
+		session.commit()
+		flash('New Category {} Successfully Created'.format(newCategory.name))
+		return redirect(url_for('showCategories'))
+	else:
+		return render_template('addcategory.html', categories=categories, isLogin=isLogin)
+
+
+# Add new Product to the Product list
+@app.route('/addproduct/', methods=['GET', 'POST'])
+def addProduct():
+	if 'email' not in login_session:
+		return redirect('/login')
+	isLogin = False
+	if 'email' in login_session:
+		isLogin = True
+	categories = session.query(Category).all()
+	if request.method == 'POST':
+		category=session.query(Category).filter_by(name=request.form['category_name']).one()
+		newProduct = Product(name = request.form['name'], description=request.form['description'],
+			                 image_url=request.form['image_url'], product_url=request.form['product_url'],
+			                 category_id=category.id)
+		session.add(newProduct)
+		session.commit()
+		flash('New Product {} Successfully Created'.format(newProduct.name))
+		return redirect(url_for('showCategories'))
+	else:
+		return render_template('addproduct.html', categories=categories, isLogin=isLogin)
+
+
+
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
     # Validate state token
