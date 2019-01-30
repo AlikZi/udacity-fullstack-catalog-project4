@@ -20,6 +20,8 @@ class Category(Base):
    
     id = Column(Integer, primary_key=True)
     name = Column(String(250), nullable=False, unique=True)
+    user_id = Column(Integer, ForeignKey('user.id'))
+    user = relationship(User)
 
     @property
     def serialize(self):
@@ -42,6 +44,8 @@ class Product(Base):
     created_date = Column(DateTime, default=datetime.datetime.utcnow)
     category_id = Column(Integer,ForeignKey('category.id'))
     category = relationship(Category, backref=backref("products", cascade="all,delete"))
+    user_id = Column(Integer, ForeignKey('user.id'))
+    user = relationship(User)
     
     
     @property

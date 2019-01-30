@@ -42,27 +42,47 @@ def showLogin():
 @app.route('/')
 @app.route('/categories/')
 def showCategories():
+    # Check if user is logged in
     isLogin = 'email' in login_session
-    categories = session.query(Category).all()
+    # All categories ordered by name
+    categories = session.query(Category).order_by(Category.name).all()
+    # Select recently added products
     latestProducts = session.query(Product).order_by(Product.created_date.desc()).limit(8)
-    return render_template('index.html', categories=categories, isLogin=isLogin, latestProducts=latestProducts)
+    return render_template('index.html', categories=categories, 
+    	                   isLogin=isLogin, latestProducts=latestProducts)
 
 @app.route('/categories/<int:cat_id>/')
 def showCategoryProducts(cat_id):
+	# Check if user is logged in
     isLogin = 'email' in login_session
-    categories = session.query(Category).all()
+    # All categories ordered by name
+    categories = session.query(Category).order_by(Category.name).all()
+    # Get category that is selected to be shown
     category = session.query(Category).filter_by(id=cat_id).one()
+    # Check if user is Creator of Category
+    isCreator = False
+    if isLogin:
+        isCreator = login_session['email'] == category.user.email
+    # Count how many products selected Category have
     countProducts = session.query(Product).filter_by(category_id=cat_id).count()
+    # Get all products from selected Category
     products = session.query(Product).filter_by(category_id=category.id).all()
     return render_template('category.html', products=products, 
                            categories=categories, category=category,
-                           isLogin=isLogin, countProducts=countProducts)
+                           isLogin=isLogin, countProducts=countProducts,
+                           isCreator=isCreator)
 
+
+# Show selected product
 @app.route('/categories/<int:cat_id>/<int:prod_id>/')
 def showProduct(cat_id, prod_id):
+    # Check if user is logged in and save the result in isLogin
     isLogin = 'email' in login_session
-    categories = session.query(Category).all()
+    # All categories ordered by name
+    categories = session.query(Category).order_by(Category.name).all()
+    # Get category that is selected to be shown
     category = session.query(Category).filter_by(id=cat_id).one()
+    # Get the selected product
     product = session.query(Product).filter_by(id=prod_id).one()
     return render_template('product.html', categories=categories,
                             category=category, product=product,
@@ -72,12 +92,16 @@ def showProduct(cat_id, prod_id):
 # Add new Category to the Category Table
 @app.route('/addcategory/', methods=['GET', 'POST'])
 def addCategory():
+    # If user is not logged in, inform him about it and redirect
     if 'email' not in login_session:
         return redirect('/login')
+    # Check if user is logged in and save the result in isLogin
     isLogin = 'email' in login_session
-    categories = session.query(Category).all()
+    # All categories ordered by name
+    categories = session.query(Category).order_by(Category.name).all()
     if request.method == 'POST':
-        newCategory = Category(name=request.form['name'])
+        newCategory = Category(name=request.form['name'], 
+        	                   user_id = login_session['user_id'])
         session.add(newCategory)
         session.commit()
         flash('New Category {} Successfully Created'.format(newCategory.name))
@@ -89,31 +113,43 @@ def addCategory():
 # Add new Product to the Product list
 @app.route('/addproduct/', methods=['GET', 'POST'])
 def addProduct():
+	# If user is not logged in, inform him about it and redirect
     if 'email' not in login_session:
         return redirect('/login')
+    # Check if user is logged in and save the result in isLogin
     isLogin = 'email' in login_session
-    categories = session.query(Category).all()
+    # All categories ordered by name
+    categories = session.query(Category).order_by(Category.name).all()
     if request.method == 'POST':
         category=session.query(Category).filter_by(name=request.form['category_name']).one()
         newProduct = Product(name = request.form['name'], description=request.form['description'],
                              image_url=request.form['image_url'], product_url=request.form['product_url'],
-                             category_id=category.id)
+                             category_id=category.id, user_id = login_session['user_id'])
         session.add(newProduct)
         session.commit()
         flash('New Product {} Successfully Created'.format(newProduct.name))
-        return redirect(url_for('showCategories'))
+        return redirect(url_for('showCategoryProducts', cat_id=newProduct.category_id))
     else:
         return render_template('addproduct.html', categories=categories, isLogin=isLogin)
 
 # Edit existing Category
 @app.route('/editcategory/<int:cat_id>/', methods=['GET', 'POST'])
 def editCategory(cat_id):
+	# If user is not logged in, inform him about it and redirect
     if 'email' not in login_session:
-    	flash("You need to Log In if you want to edit.")
+    	flash("You need to Log In if you want to edit")
         return redirect('/categories')
+    # Check if user is logged in and save the result in isLogin
     isLogin = 'email' in login_session
-    categories = session.query(Category).all()
+    # Get category that is selected to be edited
     categoryToEdit = session.query(Category).filter_by(id=cat_id).one()
+    # Check if user is Creator, if not inform that he cannot 
+    # do changes
+    if not login_session['email'] == categoryToEdit.user.email:
+    	flash("You need to be Creator of the category to be able to edit")
+        return redirect('/categories')
+     # All categories ordered by name
+    categories = session.query(Category).order_by(Category.name).all()
     if request.method == 'POST':
         if request.form['name']:
             categoryToEdit.name = request.form['name']
@@ -123,18 +159,28 @@ def editCategory(cat_id):
             return redirect(url_for('showCategoryProducts', cat_id=cat_id))
     else:
         return render_template('editcategory.html', categories=categories,
-                                isLogin=isLogin, categoryToEdit=categoryToEdit)
+                               isLogin=isLogin, categoryToEdit=categoryToEdit)
 
 
 # Delete existing Category
 @app.route('/deletecategory/<int:cat_id>/', methods=['GET', 'POST'])
 def deleteCategory(cat_id):
+    # If user is not logged in, inform him about it and redirect
     if 'email' not in login_session:
-    	flash('You need to Log In, if you want to delete Category')
-        return redirect('/login')
+    	flash("You need to Log In if you want to delete the category.")
+        return redirect('/categories')
+    # Check if user is logged in and save the result in isLogin
     isLogin = 'email' in login_session
-    categories = session.query(Category).all()
+    # Get category that is selected to be edited
     categoryToDelete = session.query(Category).filter_by(id=cat_id).one()
+    # Check if user is Creator, if not inform that he cannot 
+    # do changes
+    if not login_session['email'] == categoryToDelete.user.email:
+    	flash("You need to be a Creator of the category to be able to delete it")
+        return redirect('/categories')
+    # All categories ordered by name
+    categories = session.query(Category).order_by(Category.name).all()
+    # Check for method and do appropriate actions
     if request.method == 'POST':
         session.delete(categoryToDelete)
         session.commit()
@@ -142,7 +188,7 @@ def deleteCategory(cat_id):
         return redirect(url_for('showCategories'))
     else:
         return render_template('deletecategory.html', categories=categories,
-                                isLogin=isLogin, categoryToDelete=categoryToDelete)
+                               isLogin=isLogin, categoryToDelete=categoryToDelete)
 
 
 # Edit existing Product
