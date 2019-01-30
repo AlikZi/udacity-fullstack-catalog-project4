@@ -34,25 +34,22 @@ def showLogin():
     login_session['state'] = state
     categories = session.query(Category).all()
     # return "The current session state is %s" % login_session['state']
-    return render_template('login.html', STATE=state, categories=categories)
+    return render_template('login.html', STATE=state, categories=categories,
+    						CLIENT_ID=CLIENT_ID)
 
 
 # Main page, show all categories
 @app.route('/')
 @app.route('/categories/')
 def showCategories():
-    isLogin = False
-    if 'email' in login_session:
-        isLogin = True
+    isLogin = 'email' in login_session
     categories = session.query(Category).all()
     latestProducts = session.query(Product).order_by(Product.created_date.desc()).limit(8)
     return render_template('index.html', categories=categories, isLogin=isLogin, latestProducts=latestProducts)
 
 @app.route('/categories/<int:cat_id>/')
 def showCategoryProducts(cat_id):
-    isLogin = False
-    if 'email' in login_session:
-        isLogin = True
+    isLogin = 'email' in login_session
     categories = session.query(Category).all()
     category = session.query(Category).filter_by(id=cat_id).one()
     countProducts = session.query(Product).filter_by(category_id=cat_id).count()
@@ -63,15 +60,13 @@ def showCategoryProducts(cat_id):
 
 @app.route('/categories/<int:cat_id>/<int:prod_id>/')
 def showProduct(cat_id, prod_id):
-    isLogin = False
-    if 'email' in login_session:
-        isLogin = True
-
+    isLogin = 'email' in login_session
     categories = session.query(Category).all()
     category = session.query(Category).filter_by(id=cat_id).one()
     product = session.query(Product).filter_by(id=prod_id).one()
     return render_template('product.html', categories=categories,
-                            category=category, product=product,  isLogin=isLogin)
+                            category=category, product=product,
+                            isLogin=isLogin)
 
 
 # Add new Category to the Category Table
@@ -79,9 +74,7 @@ def showProduct(cat_id, prod_id):
 def addCategory():
     if 'email' not in login_session:
         return redirect('/login')
-    isLogin = False
-    if 'email' in login_session:
-        isLogin = True
+    isLogin = 'email' in login_session
     categories = session.query(Category).all()
     if request.method == 'POST':
         newCategory = Category(name=request.form['name'])
@@ -98,9 +91,7 @@ def addCategory():
 def addProduct():
     if 'email' not in login_session:
         return redirect('/login')
-    isLogin = False
-    if 'email' in login_session:
-        isLogin = True
+    isLogin = 'email' in login_session
     categories = session.query(Category).all()
     if request.method == 'POST':
         category=session.query(Category).filter_by(name=request.form['category_name']).one()
@@ -120,9 +111,7 @@ def editCategory(cat_id):
     if 'email' not in login_session:
     	flash("You need to Log In if you want to edit.")
         return redirect('/categories')
-    isLogin = False
-    if 'email' in login_session:
-        isLogin = True
+    isLogin = 'email' in login_session
     categories = session.query(Category).all()
     categoryToEdit = session.query(Category).filter_by(id=cat_id).one()
     if request.method == 'POST':
@@ -131,7 +120,7 @@ def editCategory(cat_id):
             session.add(categoryToEdit)
             session.commit()
             flash('You successfully updated category to {}'.format(categoryToEdit.name))
-            return redirect(url_for('showCategories'))
+            return redirect(url_for('showCategoryProducts', cat_id=cat_id))
     else:
         return render_template('editcategory.html', categories=categories,
                                 isLogin=isLogin, categoryToEdit=categoryToEdit)
@@ -142,10 +131,8 @@ def editCategory(cat_id):
 def deleteCategory(cat_id):
     if 'email' not in login_session:
     	flash('You need to Log In, if you want to delete Category')
-        return redirect('/categories')
-    isLogin = False
-    if 'email' in login_session:
-        isLogin = True
+        return redirect('/login')
+    isLogin = 'email' in login_session
     categories = session.query(Category).all()
     categoryToDelete = session.query(Category).filter_by(id=cat_id).one()
     if request.method == 'POST':
@@ -156,6 +143,57 @@ def deleteCategory(cat_id):
     else:
         return render_template('deletecategory.html', categories=categories,
                                 isLogin=isLogin, categoryToDelete=categoryToDelete)
+
+
+# Edit existing Product
+@app.route('/editproduct/<int:cat_id>/<int:prod_id>/', methods=['GET', 'POST'])
+def editProduct(cat_id, prod_id):
+    if 'email' not in login_session:
+    	flash("You need to Log In if you want to edit.")
+        return redirect('/categories')
+    isLogin = 'email' in login_session
+    categories = session.query(Category).all()
+    category = session.query(Category).filter_by(id=cat_id).one()
+    productToEdit = session.query(Product).filter_by(id=prod_id).one()
+    if request.method == 'POST':
+        if request.form['name']:
+            productToEdit.name = request.form['name']
+        if request.form['image_url']:
+            productToEdit.image_url = request.form['image_url']
+        if request.form['product_url']:
+            productToEdit.product_url = request.form['product_url']
+        if request.form['description']:
+            productToEdit.description = request.form['description']
+        session.add(productToEdit)
+        session.commit()
+        flash('You successfully edited product')
+        return redirect(url_for('showProduct', cat_id=cat_id, prod_id=prod_id))
+    else:
+        return render_template('editproduct.html', categories=categories,
+                                isLogin=isLogin, category=category, 
+                                productToEdit=productToEdit)
+
+# Delete existing product
+@app.route('/deleteproduct/<int:cat_id>/<int:prod_id>', methods=['GET', 'POST'])
+def deleteProduct(cat_id, prod_id):
+    if 'email' not in login_session:
+    	flash("You need to Log In if you want to delete Product.")
+        return redirect('/login')
+    isLogin = 'email' in login_session
+    categories = session.query(Category).all()
+    category = session.query(Category).filter_by(id=cat_id).one()
+    productToDelete = session.query(Product).filter_by(id=prod_id).one()
+    if request.method == 'POST':
+    	session.delete(productToDelete)
+    	session.commit()
+    	flash('You successfully deleted product "{}"'.format(productToDelete.name))
+        return redirect(url_for('showCategoryProducts', cat_id=cat_id))
+    else:
+    	return render_template('deleteproduct.html', categories=categories,
+                                isLogin=isLogin, category=category, 
+                                productToDelete=productToDelete)
+
+
 
 @app.route('/gconnect', methods=['POST'])
 def gconnect():

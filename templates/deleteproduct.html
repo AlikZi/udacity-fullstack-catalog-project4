@@ -2,13 +2,14 @@
 <div class="col-md-9 mt-3">
     <div class="row">
         <div class="col-md-8 offset-md-2 mt-5">
-            <h2>Are you sure you want to delete "{{categoryToDelete.name}}" category?</h2>
+            <h2>Are you sure you want to delete "{{productToDelete.name}}" product?</h2>
             <form action="#" method="POST">
                 <div class="form-group">
                     <button type="submit" class="btn btn-success mt-3" id="submit" type="submit">
                         Delete
                     </button>
-                    <a href="{{url_for('showCategories')}}" class="btn btn-danger mt-3">Cancel</a>
+                    <a href="{{url_for('showProduct', cat_id=productToDelete.category_id, prod_id=productToDelete.id)}}"
+                        class="btn btn-danger mt-3">Cancel</a>
                 </div>
             </form>
         </div>

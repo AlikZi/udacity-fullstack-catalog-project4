@@ -41,7 +41,7 @@ class Product(Base):
     product_url = Column(String(250))
     created_date = Column(DateTime, default=datetime.datetime.utcnow)
     category_id = Column(Integer,ForeignKey('category.id'))
-    category = relationship(Category, backref=backref("items", cascade="all,delete"))
+    category = relationship(Category, backref=backref("products", cascade="all,delete"))
     
     
     @property

@@ -9,6 +9,10 @@
       ({{ countProducts }} products)
       {% endif %}
     </span>
+    {% if isLogin %}
+    <a href="{{url_for('editCategory', cat_id=category.id)}}" class="h6 text-info">edit</a>
+    <a href="{{url_for('deleteCategory', cat_id=category.id)}}" class="h6 text-info">delete</a>
+    {% endif %}
   </h2>
   <div class="row">
     {% for product in products %}

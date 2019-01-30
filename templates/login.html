@@ -2,16 +2,9 @@
 <div class="mt-5 row">
   <div class="pl-5 mt-5">
     <div id="signinButton">
-      <span
-        class="g-signin"
-        data-scope="openid email"
-        data-clientid="701642673146-3kp6lbmbupfee6vpobadc2pfjodn4ukr.apps.googleusercontent.com"
-        data-redirecturi="postmessage"
-        data-accesstype="offline"
-        data-cookiepolicy="single_host_origin"
-        data-callback="signInCallback"
-        data-approvalprompt="force"
-      >
+      <span class="g-signin" data-scope="openid email" data-clientid={{CLIENT_ID}} data-redirecturi="postmessage"
+        data-accesstype="offline" data-cookiepolicy="single_host_origin" data-callback="signInCallback"
+        data-approvalprompt="force">
       </span>
     </div>
 
