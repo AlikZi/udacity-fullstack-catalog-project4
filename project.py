@@ -82,11 +82,15 @@ def showProduct(cat_id, prod_id):
     categories = session.query(Category).order_by(Category.name).all()
     # Get category that is selected to be shown
     category = session.query(Category).filter_by(id=cat_id).one()
+    # Check if user is Creator of Category
+    isCreator = False
+    if isLogin:
+        isCreator = login_session['email'] == category.user.email
     # Get the selected product
     product = session.query(Product).filter_by(id=prod_id).one()
     return render_template('product.html', categories=categories,
                             category=category, product=product,
-                            isLogin=isLogin)
+                            isLogin=isLogin, isCreator=isCreator)
 
 
 # Add new Category to the Category Table
@@ -180,7 +184,8 @@ def deleteCategory(cat_id):
         return redirect('/categories')
     # All categories ordered by name
     categories = session.query(Category).order_by(Category.name).all()
-    # Check for method and do appropriate actions
+    # Check for method and do appropriate. If 'POST' -> delete Category,
+    # if 'GET' -> render 'deletecategory.html'
     if request.method == 'POST':
         session.delete(categoryToDelete)
         session.commit()
@@ -194,13 +199,23 @@ def deleteCategory(cat_id):
 # Edit existing Product
 @app.route('/editproduct/<int:cat_id>/<int:prod_id>/', methods=['GET', 'POST'])
 def editProduct(cat_id, prod_id):
+    # If user is not logged in, inform him about it and redirect
     if 'email' not in login_session:
-    	flash("You need to Log In if you want to edit.")
-        return redirect('/categories')
+    	flash("You need to Log In if you want to edit")
+        return redirect('/login')
+    # Check if user is logged in and save the result in isLogin
     isLogin = 'email' in login_session
-    categories = session.query(Category).all()
-    category = session.query(Category).filter_by(id=cat_id).one()
+    # Get Product that user wants to edit
     productToEdit = session.query(Product).filter_by(id=prod_id).one()
+    # Check if user is Creator, if not inform that he cannot 
+    # do changes
+    if not login_session['email'] == productToEdit.user.email:
+    	flash("You need to be a Creator of the Product to edit it")
+        return redirect(url_for('showProduct', cat_id=cat_id, prod_id=prod_id))
+    # All categories ordered by name
+    categories = session.query(Category).order_by(Category.name).all()
+    # Get category that is selected to be shown
+    category = session.query(Category).filter_by(id=cat_id).one()
     if request.method == 'POST':
         if request.form['name']:
             productToEdit.name = request.form['name']
@@ -220,15 +235,25 @@ def editProduct(cat_id, prod_id):
                                 productToEdit=productToEdit)
 
 # Delete existing product
-@app.route('/deleteproduct/<int:cat_id>/<int:prod_id>', methods=['GET', 'POST'])
+@app.route('/deleteproduct/<int:cat_id>/<int:prod_id>/', methods=['GET', 'POST'])
 def deleteProduct(cat_id, prod_id):
+    # If user is not logged in, inform him about it and redirect
     if 'email' not in login_session:
-    	flash("You need to Log In if you want to delete Product.")
+    	flash("You need to Log In if you want to delete product")
         return redirect('/login')
+    # Check if user is logged in and save the result in isLogin
     isLogin = 'email' in login_session
-    categories = session.query(Category).all()
-    category = session.query(Category).filter_by(id=cat_id).one()
+    # Get the Product that User wants to delete
     productToDelete = session.query(Product).filter_by(id=prod_id).one()
+    # Check if user is Creator, if not inform that he cannot 
+    # do changes
+    if not login_session['email'] == productToDelete.user.email:
+    	flash("You need to be a Creator of the Product to delete it")
+        return redirect(url_for('showProduct', cat_id=cat_id, prod_id=prod_id))
+    # All categories ordered by name
+    categories = session.query(Category).order_by(Category.name).all()
+    # Get category that is selected to be shown
+    category = session.query(Category).filter_by(id=cat_id).one()
     if request.method == 'POST':
     	session.delete(productToDelete)
     	session.commit()
