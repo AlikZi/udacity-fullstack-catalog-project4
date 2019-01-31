@@ -19,27 +19,6 @@ from oauth2client.client import flow_from_clientsecrets
 from oauth2client.client import FlowExchangeError
 
 
-
-
-
-
-
-
-'''
-from flask import Flask, render_template, request, redirect, jsonify, url_for, flash
-from sqlalchemy import create_engine, asc
-from sqlalchemy.orm import sessionmaker
-from database_setup import Base, Category, Product, User
-from flask import session as login_session
-import random
-import string
-from oauth2client.client import flow_from_clientsecrets
-from oauth2client.client import FlowExchangeError
-import httplib2
-import json
-from flask import make_response
-import requests
-'''
 app = Flask(__name__)
 
 
@@ -49,10 +28,20 @@ APPLICATION_NAME = "Catalog App"
 
 
 # Connect to Database and create database session
-engine = create_engine('sqlite:///furniturecatalog.db', connect_args={'check_same_thread': False})
+engine = create_engine('sqlite:///furniturecatalog.db', 
+	                   connect_args={'check_same_thread': False})
+# Bind the engine to the metadata of the Base class so that the
+# declaratives can be accessed through a DBSession instance
 Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)
+# A DBSession() instance establishes all conversations with the database
+# and represents a "staging zone" for all the objects loaded into the
+# database session object. Any change made against the objects in the
+# session won't be persisted into the database until you call
+# session.commit(). If you're not happy about the changes, you can
+# revert all of them back to the last commit by calling
+# session.rollback()
 session = DBSession()
 
 @app.route('/login')
