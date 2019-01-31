@@ -1,3 +1,31 @@
+
+# Modules from Flask Library
+from flask import Flask, render_template, request, flash
+from flask import session as login_session
+from flask import make_response, redirect, jsonify, url_for
+# SQLAlchemy library to access database
+from sqlalchemy import create_engine, asc
+from sqlalchemy.orm import sessionmaker
+from database_setup import Base, Category, Product, User
+
+import random
+import string
+import httplib2
+import json
+import requests
+
+# Authentification modules
+from oauth2client.client import flow_from_clientsecrets
+from oauth2client.client import FlowExchangeError
+
+
+
+
+
+
+
+
+'''
 from flask import Flask, render_template, request, redirect, jsonify, url_for, flash
 from sqlalchemy import create_engine, asc
 from sqlalchemy.orm import sessionmaker
@@ -11,7 +39,7 @@ import httplib2
 import json
 from flask import make_response
 import requests
-
+'''
 app = Flask(__name__)
 
 
@@ -82,10 +110,12 @@ def showProduct(cat_id, prod_id):
     categories = session.query(Category).order_by(Category.name).all()
     # Get category that is selected to be shown
     category = session.query(Category).filter_by(id=cat_id).one()
-    # Check if user is Creator of Category
+    product = session.query(Product).filter_by(id=prod_id).one()
+    # Check if user is Creator of Category or Product
     isCreator = False
     if isLogin:
-        isCreator = login_session['email'] == category.user.email
+        isCreator = (login_session['email'] == category.user.email or 
+        	         login_session['email'] == product.user.email)
     # Get the selected product
     product = session.query(Product).filter_by(id=prod_id).one()
     return render_template('product.html', categories=categories,
@@ -241,17 +271,22 @@ def deleteProduct(cat_id, prod_id):
     if 'email' not in login_session:
     	flash("You need to Log In if you want to delete product")
         return redirect('/login')
+
     # Check if user is logged in and save the result in isLogin
     isLogin = 'email' in login_session
+
     # Get the Product that User wants to delete
     productToDelete = session.query(Product).filter_by(id=prod_id).one()
+
     # Check if user is Creator, if not inform that he cannot 
     # do changes
     if not login_session['email'] == productToDelete.user.email:
     	flash("You need to be a Creator of the Product to delete it")
         return redirect(url_for('showProduct', cat_id=cat_id, prod_id=prod_id))
+
     # All categories ordered by name
     categories = session.query(Category).order_by(Category.name).all()
+
     # Get category that is selected to be shown
     category = session.query(Category).filter_by(id=cat_id).one()
     if request.method == 'POST':
@@ -265,7 +300,47 @@ def deleteProduct(cat_id, prod_id):
                                 productToDelete=productToDelete)
 
 
+'''
+JSON endpoints
+'''
 
+# Show Catalog Data in JSON
+@app.route('/catalog/json/')
+def showAllJSON():
+	# Obtain all categoris
+	categories = session.query(Category).all()
+	# Obtain all products
+	products = session.query(Product).all()
+	return jsonify(categories = [cat.serialize for cat in categories],
+		           products =[prod.serialize for prod in products])
+# Show Categories Data in JSON
+@app.route('/categories/json/')
+def showCategoriesJSON():
+	# Obtain all categoris
+	categories = session.query(Category).all()
+	return jsonify(categories = [cat.serialize for cat in categories])
+
+# Show Products Data in JSON
+@app.route('/products/json/')
+def showProductsJSON():
+	# Obtain all products
+	products = session.query(Product).all()
+	return jsonify(products =[prod.serialize for prod in products])
+
+@app.route('/category/<int:cat_id>/json/')
+def showCategoryJSON(cat_id):
+	# Obtain Category
+	category = session.query(Category).filter_by(id=cat_id).one()
+	return jsonify(category = [category.serialize])
+
+@app.route('/product/<int:prod_id>/json/')
+def showProductJSON(prod_id):
+	# Obtain product
+	product = session.query(Product).filter_by(id=prod_id).one()
+	return jsonify(product = [product.serialize])
+
+
+# Connect via Google Account and fetch User info
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
     # Validate state token
@@ -354,8 +429,7 @@ def gconnect():
     return output
 
 
-    # User Helper Functions
-
+# User Helper Functions
 
 def createUser(login_session):
     newUser = User(name=login_session['username'], email=login_session[
@@ -365,11 +439,9 @@ def createUser(login_session):
     user = session.query(User).filter_by(email=login_session['email']).one()
     return user.id
 
-
 def getUserInfo(user_id):
     user = session.query(User).filter_by(id=user_id).one()
     return user
-
 
 def getUserID(email):
     try:
@@ -379,9 +451,11 @@ def getUserID(email):
         return None
 
 
+# Disconnect user
 @app.route('/gdisconnect')
 def gdisconnect():
-    # Only disconnect a connected user.
+    # Check if user is connected, 
+    # only disconnect a connected user.
     access_token = login_session.get('access_token')
     if access_token is None:
         response = make_response(
@@ -391,6 +465,7 @@ def gdisconnect():
         return redirect(url_for('showCategories'))
     response = make_response(json.dumps('Successfully disconnected.'), 200)
     response.headers['Content-Type'] = 'application/json'
+    # Delete all login_session info
     del login_session['gplus_id']
     del login_session['access_token']
     del login_session['username']
