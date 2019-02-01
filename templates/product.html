@@ -17,8 +17,10 @@
         <div class="card-body">
           <h4 class="card-title">{{ product.name }}</h4>
           <p class="lead">{{ product.description }}</p>
-          <a href="{{ product.product_url }}" class="btn btn-outline-success">Explore</a>
-          <a href="{{url_for('showCategoryProducts', cat_id=category.id)}}" class="btn btn-outline-danger">Go Back</a>
+          <a href="{{ product.product_url }}" class="btn btn-outline-success btn-block mb-3">Learn More</a>
+          <a href="{{url_for('showCategoryProducts', cat_id=category.id)}}" class="btn btn-outline-info btn-block">Other
+            {{
+            category.name }} Products</a>
         </div>
       </div>
     </div>
