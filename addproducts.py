@@ -1,3 +1,8 @@
+'''
+Insert data to the "furniturecatalog.db" database
+'''
+
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
  

@@ -6,26 +6,11 @@
       <form action="#" method="POST">
         <div class="form-group">
           <label for="name">Name:</label>
-          <input
-            type="text"
-            class="form-control mb-2"
-            name="name"
-            placeholder="Product Name"
-          />
+          <input type="text" class="form-control mb-2" name="name" placeholder="Product Name" />
           <label for="name">Image URL:</label>
-          <input
-            type="text"
-            class="form-control mb-2"
-            name="image_url"
-            placeholder="http://someimage.jpg"
-          />
+          <input type="text" class="form-control mb-2" name="image_url" placeholder="http://someimage.jpg" />
           <label for="name">Original URL:</label>
-          <input
-            type="text"
-            class="form-control mb-2"
-            name="product_url"
-            placeholder="http://resource.com/"
-          />
+          <input type="text" class="form-control mb-2" name="product_url" placeholder="http://resource.com/" />
           <label for="category_name">Category:</label>
           <select class="form-control" name="category_name">
             {% for category in categories %}
@@ -34,12 +19,7 @@
           </select>
           <label for="description">Description</label>
           <textarea class="form-control" rows="3" name="description"></textarea>
-          <button
-            type="submit"
-            class="btn btn-success btn-block mt-3"
-            id="submit"
-            type="submit"
-          >
+          <button type="submit" class="btn btn-success btn-block mt-3" id="submit" type="submit">
             Create
           </button>
         </div>

@@ -1,3 +1,6 @@
+'''
+Setup database for the Furniture Catalog Application
+'''
 import datetime
 from sqlalchemy import Column, ForeignKey, Integer, String, DateTime
 from sqlalchemy.ext.declarative import declarative_base
@@ -43,7 +46,10 @@ class Product(Base):
     product_url = Column(String(250))
     created_date = Column(DateTime, default=datetime.datetime.utcnow)
     category_id = Column(Integer,ForeignKey('category.id'))
-    category = relationship(Category, backref=backref("products", cascade="all,delete"))
+    # When Category is deleted, all products that it contains
+    # will get deleted as well
+    category = relationship(Category, 
+                            backref=backref("products", cascade="all,delete"))
     user_id = Column(Integer, ForeignKey('user.id'))
     user = relationship(User)
     
