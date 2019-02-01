@@ -1,3 +1,7 @@
+'''
+Project 4 for Udacity Fullstack Nanodegree
+Author: Aleksandr Zonis
+'''
 
 # Modules from Flask Library
 from flask import Flask, render_template, request, flash
@@ -44,6 +48,8 @@ DBSession = sessionmaker(bind=engine)
 # session.rollback()
 session = DBSession()
 
+
+# Login Page
 @app.route('/login')
 def showLogin():
     state = ''.join(random.choice(string.ascii_uppercase + string.digits)
@@ -68,6 +74,8 @@ def showCategories():
     return render_template('index.html', categories=categories, 
     	                   isLogin=isLogin, latestProducts=latestProducts)
 
+
+# Show Products of the selected Category
 @app.route('/categories/<int:cat_id>/')
 def showCategoryProducts(cat_id):
 	# Check if user is logged in
@@ -123,6 +131,9 @@ def addCategory():
     # All categories ordered by name
     categories = session.query(Category).order_by(Category.name).all()
     if request.method == 'POST':
+    	if request.form['name']=='':
+    		flash("Please, enter Category Name")
+    		return render_template('addcategory.html', categories=categories, isLogin=isLogin)
         newCategory = Category(name=request.form['name'], 
         	                   user_id = login_session['user_id'])
         session.add(newCategory)
@@ -144,10 +155,28 @@ def addProduct():
     # All categories ordered by name
     categories = session.query(Category).order_by(Category.name).all()
     if request.method == 'POST':
+    	# Check if all the fields are filled out
+    	if request.form['image_url']=='':
+    		flash("Please, enter product image(link of the image). \
+    			   Make sure you fill out all the fields")
+    		return render_template('addproduct.html', categories=categories, isLogin=isLogin)
+    	if request.form['name']=='':
+    		flash("Please, enter product name. Make sure you fill out all the fields")
+    		return render_template('addproduct.html', categories=categories, isLogin=isLogin)
+    	if request.form['product_url'] == '':
+    		flash("Please, enter product URL. Make sure you fill out all the fields")
+    		return render_template('addproduct.html', categories=categories, isLogin=isLogin)
+    	if request.form['description']=='':
+    		flash('Please, enter product description. Make sure you fill out all the fields')
+    		return render_template('addproduct.html', categories=categories, isLogin=isLogin)
+
         category=session.query(Category).filter_by(name=request.form['category_name']).one()
-        newProduct = Product(name = request.form['name'], description=request.form['description'],
-                             image_url=request.form['image_url'], product_url=request.form['product_url'],
-                             category_id=category.id, user_id = login_session['user_id'])
+        newProduct = Product(name = request.form['name'], 
+        					 description=request.form['description'],
+                             image_url=request.form['image_url'], 
+                             product_url=request.form['product_url'],
+                             category_id=category.id, 
+                             user_id = login_session['user_id'])
         session.add(newProduct)
         session.commit()
         flash('New Product {} Successfully Created'.format(newProduct.name))
