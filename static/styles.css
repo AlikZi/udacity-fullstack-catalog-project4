@@ -1,0 +1,20 @@
+/*  styles for Furniture Catalog Application */
+
+/* Product Card Styles */
+.card{
+    transition: box-shadow 0.3s ease-in-out;
+}
+
+.card:hover{
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.25);
+}
+
+/* Navbar Styles */
+.navbar{
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.25);
+}
+
+/* Login and Logout button */
+#login:hover .nav-link, #logout:hover .nav-link{
+    color: white;
+}
