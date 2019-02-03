@@ -35,7 +35,7 @@
           <li class="nav-item">
             <a href="/addproduct" class="nav-link">Add Product</a>
           </li>
-          <li id="logout" class="nav-item btn btn-outline-danger">
+          <li id="logout" class="ml-md-4 nav-item btn btn-outline-danger">
             <a href="/gdisconnect" class="nav-link">Log Out</a>
           </li>
         </ul>
@@ -44,7 +44,7 @@
           <li class="nav-item">
             <a href="/categories" class="nav-link">Home</a>
           </li>
-          <li id="login" class="nav-item btn btn-outline-success">
+          <li id="login" class="ml-md-4 nav-item btn btn-outline-success">
             <a href="/login" class="nav-link">Log In</a>
           </li>
         </ul>
@@ -70,7 +70,7 @@
       <div id="categories" class="row">
         <div class="col-md-3 mt-3">
           <h2 class="mb-3">Categories</h2>
-          <ul class="list-group">
+          <ul class="list-group box-shadow">
             {% for category in categories %}
             <a href="{{url_for('showCategoryProducts', cat_id=category.id) }}" class="list-group-item text-success">{{
               category.name }}</a>

@@ -1,17 +1,32 @@
 {% extends 'main.html' %} {% block content %}
+<!--
 <div class="mt-5 row">
-  <div class="pl-5 mt-5">
-    <div id="signinButton">
-      <span class="g-signin" data-scope="openid email" data-clientid={{CLIENT_ID}} data-redirecturi="postmessage"
-        data-accesstype="offline" data-cookiepolicy="single_host_origin" data-callback="signInCallback"
-        data-approvalprompt="force">
-      </span>
+  <div class="col-md-4 offset-md-4">
+    <div class="mt-5">
+      <div id="signinButton">
+        <span class="g-signin" data-scope="openid email" data-clientid={{CLIENT_ID}} data-redirecturi="postmessage"
+          data-accesstype="offline" data-cookiepolicy="single_host_origin" data-callback="signInCallback"
+          data-approvalprompt="force">
+        </span>
+      </div>
     </div>
-
-    <div id="result" class="lead"></div>
   </div>
 </div>
-
+-->
+<div class="col-md-9 mt-4">
+  <div class="mt-5">
+    <div class="jumbotron text-center bg-light box-shadow">
+      <h1 class="h4">Please Sign In</h1>
+      <div id="signinButton" class="my-5">
+        <span class="g-signin" data-scope="openid email" data-clientid={{CLIENT_ID}} data-redirecturi="postmessage"
+          data-accesstype="offline" data-cookiepolicy="single_host_origin" data-callback="signInCallback"
+          data-approvalprompt="force">
+        </span>
+      </div>
+      <p class="lead">You will be permitted to create, edit or delete categories and products.</p>
+    </div>
+  </div>
+</div>
 <!--LOAD PRE-REQUISITES FOR GOOGLE SIGN IN -->
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
 <script src="//apis.google.com/js/platform.js?onload=start"></script>
