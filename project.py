@@ -55,7 +55,8 @@ def showLogin():
     state = ''.join(random.choice(string.ascii_uppercase + string.digits)
                     for x in xrange(32))
     login_session['state'] = state
-    categories = session.query(Category).all()
+     # All categories ordered by name
+    categories = session.query(Category).order_by(Category.name).all()
     # return "The current session state is %s" % login_session['state']
     return render_template('login.html', STATE=state, categories=categories,
                            CLIENT_ID=CLIENT_ID)

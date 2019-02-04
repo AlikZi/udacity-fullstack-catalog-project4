@@ -8,7 +8,7 @@
                     <button type="submit" class="btn btn-success mt-3" id="submit" type="submit">
                         Delete
                     </button>
-                    <a href="{{url_for('showCategories')}}" class="btn btn-danger mt-3">Cancel</a>
+                    <a href="{{url_for('showCategoryProducts', cat_id=categoryToDelete.id)}}" class="btn btn-danger mt-3">Cancel</a>
                 </div>
             </form>
         </div>
