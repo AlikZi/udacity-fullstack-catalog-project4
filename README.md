@@ -19,6 +19,7 @@ It has Flask routing for all the web pages of the app.
 - The App is formatted and compliant with the Python [PEP 8](https://www.python.org/dev/peps/pep-0008/) style guide.
 - The app is fully responsive. The web pages of the App use [Bootstrap 4](https://getbootstrap.com/docs/4.0/getting-started/introduction/), which is HTML, CSS, and JavaScript framework for developing responsive, mobile-first websites.
 
+
 ## Starting Using the Furniture Catalog App
 
 ### Install and Configure Virtual Machine
@@ -116,7 +117,3 @@ Once it is running. Visit [http://localhost:8000](http://localhost:8000) in the 
 
 
  
-
-    
-
-
