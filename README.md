@@ -1,7 +1,9 @@
 # README
 
 Udacity Full Stack Web Developer Nanodegree Program
+
 Project 4: Catalog App
+
 Author: Aleksandr Zonis
 
 ## Description
@@ -61,6 +63,17 @@ Once it is up and running, type
 vagrant ssh
 ``` 
 to log into it. This will log your terminal in to the virtual machine, and you'll get a Linux shell prompt.
+
+#### Install necessary modules
+
+If you want to run Application using python 2, most of the modules are already pre-installed. But, if you are planning to run it in python 3. Run these commands in the shell, that will install necessary packages
+
+```shell
+sudo pip3 install flask
+sudo pip3 install sqlalchemy
+sudo pip3 install httplib2
+sudo pip3 install oauth2client
+```
 
 ### Cloning Application to the VM
 

@@ -53,7 +53,7 @@ session = DBSession()
 @app.route('/login')
 def showLogin():
     state = ''.join(random.choice(string.ascii_uppercase + string.digits)
-                    for x in xrange(32))
+                    for x in range(32))
     login_session['state'] = state
      # All categories ordered by name
     categories = session.query(Category).order_by(Category.name).all()
@@ -163,15 +163,15 @@ def addProduct():
     categories = session.query(Category).order_by(Category.name).all()
     if request.method == 'POST':
         # Check if all the fields are filled out
-        if request.form['image_url'] == '':
-            flash("Please, enter product image(link of the image). \
-                   Make sure you fill out all the fields")
-            return render_template('addproduct.html',
-                                   categories=categories,
-                                   isLogin=isLogin)
         if request.form['name'] == '':
             flash("Please, enter product name. \
                   Make sure you fill out all the fields")
+            return render_template('addproduct.html',
+                                   categories=categories,
+                                   isLogin=isLogin)
+        if request.form['image_url'] == '':
+            flash("Please, enter product image(link of the image). \
+                   Make sure you fill out all the fields")
             return render_template('addproduct.html',
                                    categories=categories,
                                    isLogin=isLogin)
@@ -420,8 +420,8 @@ def gconnect():
     access_token = credentials.access_token
     url = ('https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=%s'
            % access_token)
-    h = httplib2.Http()
-    result = json.loads(h.request(url, 'GET')[1])
+    h = requests.get(url=url)
+    result = json.loads(h.text)
     # If there was an error in the access token info, abort.
     if result.get('error') is not None:
         response = make_response(json.dumps(result.get('error')), 500)
@@ -440,7 +440,7 @@ def gconnect():
     if result['issued_to'] != CLIENT_ID:
         response = make_response(
             json.dumps("Token's client ID does not match app's."), 401)
-        print "Token's client ID does not match app's."
+        print("Token's client ID does not match app's.")
         response.headers['Content-Type'] = 'application/json'
         return response
 
@@ -479,7 +479,7 @@ def gconnect():
     output += login_session['username']
     output += '!</h1>'
     flash("You are now logged in as %s" % login_session['username'])
-    print "done!"
+    print("done!")
     return output
 
 
