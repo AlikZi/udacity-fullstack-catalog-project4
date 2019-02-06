@@ -24,6 +24,8 @@
 
 /* Media Queries */
 @media screen and (max-width:991px){
+    // hide column on index page on screen smaller 
+    // than large
     .show-large{
         display: none;
     }
