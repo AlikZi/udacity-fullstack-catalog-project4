@@ -129,4 +129,6 @@ project.py
 Once it is running. Visit [http://localhost:8000](http://localhost:8000) in the browser.
 
 
- 
+## License
+
+The contents of this repository are covered under the [MIT license](License.md).
