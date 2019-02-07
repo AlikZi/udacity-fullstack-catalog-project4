@@ -49,23 +49,23 @@ DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
 
-# Login Page
 @app.route('/login')
 def showLogin():
+    """App route function to display login page."""
     state = ''.join(random.choice(string.ascii_uppercase + string.digits)
                     for x in range(32))
     login_session['state'] = state
-     # All categories ordered by name
+    # All categories ordered by name
     categories = session.query(Category).order_by(Category.name).all()
     # return "The current session state is %s" % login_session['state']
     return render_template('login.html', STATE=state, categories=categories,
                            CLIENT_ID=CLIENT_ID)
 
 
-# Main page, show all categories
 @app.route('/')
 @app.route('/categories/')
 def showCategories():
+    """App route function for main page to show all categories."""
     # Check if user is logged in
     isLogin = 'email' in login_session
     # All categories ordered by name
@@ -77,9 +77,9 @@ def showCategories():
                            isLogin=isLogin, latestProducts=latestProducts)
 
 
-# Show Products of the selected Category
 @app.route('/categories/<int:cat_id>/')
 def showCategoryProducts(cat_id):
+    """App route function to show Products of the selected Category."""
     # Check if user is logged in
     isLogin = 'email' in login_session
     # All categories ordered by name
@@ -101,9 +101,9 @@ def showCategoryProducts(cat_id):
                            isCreator=isCreator)
 
 
-# Show selected product
 @app.route('/categories/<int:cat_id>/<int:prod_id>/')
 def showProduct(cat_id, prod_id):
+    """App route function to show selected product."""
     # Check if user is logged in and save the result in isLogin
     isLogin = 'email' in login_session
     # All categories ordered by name
@@ -123,10 +123,9 @@ def showProduct(cat_id, prod_id):
                            isLogin=isLogin, isCreator=isCreator)
 
 
-# Add new Category to the Category Table
 @app.route('/addcategory/', methods=['GET', 'POST'])
 def addCategory():
-    # If user is not logged in, inform him about it and redirect
+    """App route function to add new Category to the Category Table."""
     if 'email' not in login_session:
         return redirect('/login')
     # Check if user is logged in and save the result in isLogin
@@ -151,9 +150,9 @@ def addCategory():
                                isLogin=isLogin)
 
 
-# Add new Product to the Product list
 @app.route('/addproduct/', methods=['GET', 'POST'])
 def addProduct():
+    """App route function to add new Product to the Product list."""
     # If user is not logged in, inform him about it and redirect
     if 'email' not in login_session:
         return redirect('/login')
@@ -206,9 +205,9 @@ def addProduct():
                                categories=categories, isLogin=isLogin)
 
 
-# Edit existing Category
 @app.route('/editcategory/<int:cat_id>/', methods=['GET', 'POST'])
 def editCategory(cat_id):
+    """App route function to edit existing Category."""
     # If user is not logged in, inform him about it and redirect
     if 'email' not in login_session:
         flash("You need to Log In if you want to edit")
@@ -243,9 +242,9 @@ def editCategory(cat_id):
                                isLogin=isLogin, categoryToEdit=categoryToEdit)
 
 
-# Delete existing Category
 @app.route('/deletecategory/<int:cat_id>/', methods=['GET', 'POST'])
 def deleteCategory(cat_id):
+    """App route function to delete existing Category"""
     # If user is not logged in, inform him about it and redirect
     if 'email' not in login_session:
         flash("You need to Log In if you want to delete the category.")
@@ -277,9 +276,9 @@ def deleteCategory(cat_id):
                                categoryToDelete=categoryToDelete)
 
 
-# Edit existing Product
 @app.route('/editproduct/<int:cat_id>/<int:prod_id>/', methods=['GET', 'POST'])
 def editProduct(cat_id, prod_id):
+    """App route function to edit existing Product."""
     # If user is not logged in, inform him about it and redirect
     if 'email' not in login_session:
         flash("You need to Log In if you want to edit")
@@ -316,10 +315,10 @@ def editProduct(cat_id, prod_id):
                                productToEdit=productToEdit)
 
 
-# Delete existing product
 @app.route('/deleteproduct/<int:cat_id>/<int:prod_id>/',
            methods=['GET', 'POST'])
 def deleteProduct(cat_id, prod_id):
+    """App route function to delete existing product."""
     # If user is not logged in, inform him about it and redirect
     if 'email' not in login_session:
         flash("You need to Log In if you want to delete product")
@@ -359,9 +358,9 @@ JSON endpoints
 '''
 
 
-# Show Catalog Data in JSON
 @app.route('/catalog/json/')
 def showAllJSON():
+    """App route function to show Catalog Data in JSON."""
     # Obtain all categoris
     categories = session.query(Category).all()
     # Obtain all products
@@ -370,17 +369,17 @@ def showAllJSON():
                    products=[prod.serialize for prod in products])
 
 
-# Show Categories Data in JSON
 @app.route('/categories/json/')
 def showCategoriesJSON():
+    """App route function to show Categories Data in JSON."""
     # Obtain all categoris
     categories = session.query(Category).all()
     return jsonify(categories=[cat.serialize for cat in categories])
 
 
-# Show Products Data in JSON
 @app.route('/products/json/')
 def showProductsJSON():
+    """App route function to show Products Data in JSON."""
     # Obtain all products
     products = session.query(Product).all()
     return jsonify(products=[prod.serialize for prod in products])
@@ -388,6 +387,7 @@ def showProductsJSON():
 
 @app.route('/category/<int:cat_id>/json/')
 def showCategoryJSON(cat_id):
+    """App route function to show selected Category JSON."""
     # Obtain Category
     category = session.query(Category).filter_by(id=cat_id).one()
     return jsonify(category=[category.serialize])
@@ -395,14 +395,15 @@ def showCategoryJSON(cat_id):
 
 @app.route('/product/<int:prod_id>/json/')
 def showProductJSON(prod_id):
+    """App route function to show selected Product JSON."""
     # Obtain product
     product = session.query(Product).filter_by(id=prod_id).one()
     return jsonify(product=[product.serialize])
 
 
-# Connect via Google Account and fetch User info
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
+    """Connect via Google Account and fetch User info."""
     # Validate state token
     if request.args.get('state') != login_session['state']:
         response = make_response(json.dumps('Invalid state parameter.'), 401)
@@ -491,6 +492,7 @@ def gconnect():
 
 # User Helper Functions
 def createUser(login_session):
+    """Creates new login_session user, returns user.id."""
     newUser = User(name=login_session['username'], email=login_session[
                    'email'])
     session.add(newUser)
@@ -500,11 +502,13 @@ def createUser(login_session):
 
 
 def getUserInfo(user_id):
+    """Returns User object"""
     user = session.query(User).filter_by(id=user_id).one()
     return user
 
 
 def getUserID(email):
+    """Returns user.id if exists, otherwise returns none."""
     try:
         user = session.query(User).filter_by(email=email).one()
         return user.id
@@ -512,9 +516,9 @@ def getUserID(email):
         return None
 
 
-# Disconnect user
 @app.route('/gdisconnect')
 def gdisconnect():
+    """Disconnect user"""
     # Check if user is connected,
     # only disconnect a connected user.
     access_token = login_session.get('access_token')
@@ -535,6 +539,7 @@ def gdisconnect():
     del login_session['provider']
     flash("You have successfully been logged out.")
     return redirect(url_for('showCategories'))
+
 
 if __name__ == '__main__':
     app.secret_key = 'super_secret_key'
