@@ -227,11 +227,17 @@ def editCategory(cat_id):
     if request.method == 'POST':
         if request.form['name']:
             categoryToEdit.name = request.form['name']
-            session.add(categoryToEdit)
-            session.commit()
-            flash('You successfully \
-                  updated category to {}'.format(categoryToEdit.name))
-            return redirect(url_for('showCategoryProducts', cat_id=cat_id))
+        else:
+            flash('Please, enter category name.')
+            return render_template('editcategory.html',
+                                   categories=categories,
+                                   isLogin=isLogin,
+                                   categoryToEdit=categoryToEdit)
+        session.add(categoryToEdit)
+        session.commit()
+        flash('You successfully \
+              updated category to {}'.format(categoryToEdit.name))
+        return redirect(url_for('showCategoryProducts', cat_id=cat_id))
     else:
         return render_template('editcategory.html', categories=categories,
                                isLogin=isLogin, categoryToEdit=categoryToEdit)
