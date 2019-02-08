@@ -66,7 +66,7 @@ to log into it. This will log your terminal in to the virtual machine, and you'l
 
 #### Install necessary modules
 
-If you want to run Application using python 2, most of the modules are already pre-installed. But, if you are planning to run it in python 3. To make you
+If you want to run Application using python 2, most of the modules are already pre-installed. But to make sure you have all dependencies pre-installed before running the application. Run this on your virtual machine:
 
 For Python 2, run:
 
