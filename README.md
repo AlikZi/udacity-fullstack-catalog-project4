@@ -22,7 +22,7 @@ It has Flask routing for all the web pages of the app.
 - The app is fully responsive. The web pages of the App use [Bootstrap 4](https://getbootstrap.com/docs/4.0/getting-started/introduction/), which is HTML, CSS, and JavaScript framework for developing responsive, mobile-first websites.
 
 
-## Starting Using the Furniture Catalog App
+## Installing and Starting Using the Furniture Catalog App
 
 ### Install and Configure Virtual Machine
 
@@ -66,14 +66,16 @@ to log into it. This will log your terminal in to the virtual machine, and you'l
 
 #### Install necessary modules
 
-If you want to run Application using python 2, most of the modules are already pre-installed. But, if you are planning to run it in python 3. Run these commands in the shell, that will install necessary packages
+If you want to run Application using python 2, most of the modules are already pre-installed. But, if you are planning to run it in python 3. To make you
 
-```shell
-sudo pip3 install flask
-sudo pip3 install sqlalchemy
-sudo pip3 install httplib2
-sudo pip3 install oauth2client
-```
+For Python 2, run:
+
+`pip install -r requirements.txt`
+
+For Python 3, run:
+
+`pip3 install -r requirements3.txt`
+
 
 ### Cloning Application to the VM
 
@@ -110,24 +112,84 @@ Once you complete steps from above: Install and Configure Virtual Machine, Cloni
 
 - Create database
 
-```shell
-python database_setup.py
-```
+`python database_setup.py` or `python3 database_setup.py`
 
 - Populate database
 
-```shell
-python addproducts.py
-```
+`python addproducts.py` or `python3 addproducts.py`
 
 - And finally, run the app
 
-```shell
-project.py
-```
+`python project.py` or `python3 project.py`
 
 Once it is running. Visit [http://localhost:8000](http://localhost:8000) in the browser.
 
+## Using Furniture Catalog App
+
+The home page displays navbar with Application name, Home Button and Log In button; categories link list and recently added products.
+
+![homegage](desc_images/homepage.png)
+
+You can view all the categories and products in the catalog, but if you want to create your own category or product you need to log in via Google Sign In.
+
+- Login Page.
+
+![login page](desc_images/login.png)
+
+-Google Sign in page.
+
+![google sign in](desc_images/google-sign-in.png)
+
+Once you are logged in, you are able to Create category or product. In the navbar you can spot 'add category' and 'add product' links.
+
+![create product](desc_images/add-product.png)
+
+If you are logged in, you can also Update or Delete category or product, but only if you are the creator of the product or the category.
+
+- View category and have options to edit or delete category, if you created it.
+
+![category](desc_images/category-page.png)
+
+- Edit category.
+
+![edit category](desc_images/edit-category.png)
+
+- View product and have options to edit or delete product, if you created it.
+![product](desc_images/product.png)
+
+- Edit product.
+
+![edit product](desc_images/edit-product.png)
+
+-Delete product.
+
+![delete product](desc_images/delete-product.png)
+
+The application is fully responsive and can be used via mobile or desktop display.
+
+- Responsive Category Page
+
+![responsive example 1](desc_images/responsive/responsive-category.png)
+
+- Responsive Home Page
+
+![responsive example 2](desc_images/responsive/responsive-home.png)
+
+Also, the application returns JSON endpoints for full catalog, categories and products pages.
+
+- Catalog JSON.
+
+![catalog JSON](desc_images/json/catalog-JSON.png)
+
+- Categories JSON.
+
+![categories JSON](desc_images/json/categories-JSON.png)
+
+- Products JSON.
+
+![products JSON](desc_images/json/products-JSON.png)
+
+For more description image visit [desc_images](desc_images)
 
 ## License
 
