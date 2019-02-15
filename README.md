@@ -124,6 +124,12 @@ Once you complete steps from above: Install and Configure Virtual Machine, Cloni
 
 Once it is running. Visit [http://localhost:8000](http://localhost:8000) in the browser.
 
+
+## Deployment
+
+For my final project, I configured a Linux Apache server to serve the app. The project documentation is available in the [catalog-server](https://github.com/AlikZi/catalog-server) repo. The app is available at [http://35.175.70.121.xip.io/](http://35.175.70.121.xip.io/).
+
+
 ## Using Furniture Catalog App
 
 The home page displays navbar with Application name, Home Button and Log In button; categories link list and recently added products.
@@ -190,6 +196,7 @@ Also, the application returns JSON endpoints for full catalog, categories and pr
 ![products JSON](desc_images/json/products-JSON.png)
 
 For more description image visit [desc_images](desc_images)
+
 
 ## License
 
