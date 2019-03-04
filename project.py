@@ -401,8 +401,8 @@ def showProductJSON(prod_id):
     return jsonify(product=[product.serialize])
 
 
-@app.route('/gconnect', methods=['POST'])
-def gconnect():
+@app.route('/googleConnect', methods=['POST'])
+def googleConnect():
     """Connect via Google Account and fetch User info."""
     # Validate state token
     if request.args.get('state') != login_session['state']:
@@ -447,7 +447,6 @@ def gconnect():
     if result['issued_to'] != CLIENT_ID:
         response = make_response(
             json.dumps("Token's client ID does not match app's."), 401)
-        print("Token's client ID does not match app's.")
         response.headers['Content-Type'] = 'application/json'
         return response
 
@@ -480,14 +479,9 @@ def gconnect():
     if not user_id:
         user_id = createUser(login_session)
     login_session['user_id'] = user_id
-
-    output = ''
-    output += '<h1>Welcome, '
-    output += login_session['username']
-    output += '!</h1>'
+    result = "User is authorized!"
     flash("You are now logged in as %s" % login_session['username'])
-    print("done!")
-    return output
+    return result
 
 
 # User Helper Functions
@@ -516,8 +510,8 @@ def getUserID(email):
         return None
 
 
-@app.route('/gdisconnect')
-def gdisconnect():
+@app.route('/googleDisconnect')
+def googleDisconnect():
     """Disconnect user"""
     # Check if user is connected,
     # only disconnect a connected user.
