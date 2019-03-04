@@ -134,68 +134,68 @@ For my final project, I configured a Linux Apache server to serve the app. The p
 
 The home page displays navbar with Application name, Home Button and Log In button; categories link list and recently added products.
 
-![homegage](desc_images/homepage.png)
+![homegage](documentation/homepage.png)
 
 You can view all the categories and products in the catalog, but if you want to create your own category or product you need to log in via Google Sign In.
 
 - Login Page.
 
-![login page](desc_images/login.png)
+![login page](documentation/login.png)
 
 -Google Sign in page.
 
-![google sign in](desc_images/google-sign-in.png)
+![google sign in](documentation/google-sign-in.png)
 
 Once you are logged in, you are able to Create category or product. In the navbar you can spot 'add category' and 'add product' links.
 
-![create product](desc_images/add-product.png)
+![create product](documentation/add-product.png)
 
 If you are logged in, you can also Update or Delete category or product, but only if you are the creator of the product or the category.
 
 - View category and have options to edit or delete category, if you created it.
 
-![category](desc_images/category-page.png)
+![category](documentation/category-page.png)
 
 - Edit category.
 
-![edit category](desc_images/edit-category.png)
+![edit category](documentation/edit-category.png)
 
 - View product and have options to edit or delete product, if you created it.
-![product](desc_images/product.png)
+![product](documentation/product.png)
 
 - Edit product.
 
-![edit product](desc_images/edit-product.png)
+![edit product](documentation/edit-product.png)
 
 -Delete product.
 
-![delete product](desc_images/delete-product.png)
+![delete product](documentation/delete-product.png)
 
 The application is fully responsive and can be used via mobile or desktop display.
 
 - Responsive Category Page
 
-![responsive example 1](desc_images/responsive/responsive-category.png)
+![responsive example 1](documentation/responsive/responsive-category.png)
 
 - Responsive Home Page
 
-![responsive example 2](desc_images/responsive/responsive-home.png)
+![responsive example 2](documentation/responsive/responsive-home.png)
 
 Also, the application returns JSON endpoints for full catalog, categories and products pages.
 
 - Catalog JSON.
 
-![catalog JSON](desc_images/json/catalog-JSON.png)
+![catalog JSON](documentation/json/catalog-JSON.png)
 
 - Categories JSON.
 
-![categories JSON](desc_images/json/categories-JSON.png)
+![categories JSON](documentation/json/categories-JSON.png)
 
 - Products JSON.
 
-![products JSON](desc_images/json/products-JSON.png)
+![products JSON](documentation/json/products-JSON.png)
 
-For more description image visit [desc_images](desc_images)
+For more description image visit [documentation](documentation)
 
 
 ## License
