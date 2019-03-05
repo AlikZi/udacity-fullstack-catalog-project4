@@ -5,7 +5,7 @@ from flask import make_response, redirect, jsonify, url_for
 # SQLAlchemy library to access database
 from sqlalchemy import create_engine, asc
 from sqlalchemy.orm import sessionmaker
-from project.database_setup import Base, Category, Product, User
+from project.models import Base, Category, Product, User
 
 import random
 import string
@@ -17,7 +17,7 @@ import requests
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client.client import FlowExchangeError
 
-
+# Create Blueprint 'categories'
 categories = Blueprint('categories', __name__)
 
 # Connect to Database and create database session
@@ -36,6 +36,7 @@ DBSession = sessionmaker(bind=engine)
 # revert all of them back to the last commit by calling
 # session.rollback()
 session = DBSession()
+
 
 @categories.route('/')
 @categories.route('/categories/')
@@ -172,5 +173,3 @@ def deleteCategory(cat_id):
                                categories=categories,
                                isLogin=isLogin,
                                categoryToDelete=categoryToDelete)
-
-

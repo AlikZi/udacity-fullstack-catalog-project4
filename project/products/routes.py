@@ -5,17 +5,13 @@ from flask import make_response, redirect, jsonify, url_for
 # SQLAlchemy library to access database
 from sqlalchemy import create_engine, asc
 from sqlalchemy.orm import sessionmaker
-from project.database_setup import Base, Category, Product, User
+from project.models import Base, Category, Product, User
 
 import random
 import string
 import httplib2
 import json
 import requests
-
-# Authentification modules
-from oauth2client.client import flow_from_clientsecrets
-from oauth2client.client import FlowExchangeError
 
 
 products = Blueprint('products', __name__)

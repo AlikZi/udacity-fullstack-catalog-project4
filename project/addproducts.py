@@ -6,7 +6,7 @@ Insert data to the "furniturecatalog.db" database
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from database_setup import Base, Category, Product, User
+from models import Base, Category, Product, User
 
 engine = create_engine('sqlite:///furniturecatalog.db')
 # Bind the engine to the metadata of the Base class so that the
