@@ -17,6 +17,7 @@ import string
 import httplib2
 import json
 import requests
+import config
 
 # Authentification modules
 from oauth2client.client import flow_from_clientsecrets
@@ -24,6 +25,9 @@ from oauth2client.client import FlowExchangeError
 
 
 app = Flask(__name__)
+
+# Configure the Application 
+app.config.from_object('config.DevelopmentConfig')
 
 
 CLIENT_ID = json.loads(
@@ -533,9 +537,3 @@ def googleDisconnect():
     del login_session['provider']
     flash("You have successfully been logged out.")
     return redirect(url_for('showCategories'))
-
-
-if __name__ == '__main__':
-    app.secret_key = 'super_secret_key'
-    app.debug = True
-    app.run(host='0.0.0.0', port=8000)
