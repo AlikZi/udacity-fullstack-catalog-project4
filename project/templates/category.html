@@ -1,0 +1,35 @@
+{% extends 'main.html' %} {% block content %}
+<div class="col-md-9 mt-3">
+  <h2 class="mb-3">
+    {{ category.name }}
+    <span class="text-muted h6">
+      {% if countProducts == 1 %}
+      ({{ countProducts }} product)
+      {% else %}
+      ({{ countProducts }} products)
+      {% endif %}
+    </span>
+    {% if isCreator %}
+    <a href="{{url_for('categories.editCategory', cat_id=category.id)}}" class="h6 text-info">edit</a> <a href="{{url_for('categories.deleteCategory', cat_id=category.id)}}"
+      class="h6 text-info">delete</a>
+    {% endif %}
+  </h2>
+  {% if isLogin %}
+  <p class="text-muted"><i>Creator: {{category.user.name}}</i></p>
+  {% endif %}
+  <div class="row">
+    {% for product in products %}
+    <div class="col-sm-6 col-lg-4 mb-4">
+      <div class="card">
+        <img class="card-img-top img-fluid" src="{{ product.image_url }}" alt="" />
+        <div class="card-body">
+          <h4 class="card-title">{{ product.name }}</h4>
+          <a href="{{url_for('showProduct', cat_id=category.id, prod_id=product.id )}}" class="btn btn-outline-success">Explore</a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% endblock %}
