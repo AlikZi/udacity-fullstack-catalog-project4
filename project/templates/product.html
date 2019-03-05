@@ -5,8 +5,8 @@
       <div class="card mb-5">
         {% if isCreator %}
         <div class="card-header text-center">
-          <a href="{{url_for('editProduct', cat_id=product.category_id, prod_id=product.id)}}" class="h6 text-info px-4">edit</a>
-          <a href="{{url_for('deleteProduct', cat_id=product.category_id, prod_id=product.id)}}" class="h6 text-info px-4">delete</a>
+          <a href="{{url_for('products.editProduct', cat_id=product.category_id, prod_id=product.id)}}" class="h6 text-info px-4">edit</a>
+          <a href="{{url_for('products.deleteProduct', cat_id=product.category_id, prod_id=product.id)}}" class="h6 text-info px-4">delete</a>
         </div>
         {% else %}
         <div class="card-header text-center">
