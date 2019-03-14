@@ -2,10 +2,12 @@
 from flask import Flask, render_template, request, flash, Blueprint
 from flask import session as login_session
 from flask import make_response, redirect, jsonify, url_for
-# SQLAlchemy library to access database
-from sqlalchemy import create_engine, asc
-from sqlalchemy.orm import sessionmaker
+# Access database
 from project.models import Base, Category, Product, User
+from project.db import DBConnector
+# Services
+from project.services.categories import CategoryService
+from project.services.config import ConfigService
 
 import random
 import string
@@ -20,26 +22,15 @@ from oauth2client.client import FlowExchangeError
 
 auth = Blueprint('auth', __name__)
 
-# Connect to Database and create database session
-engine = create_engine('sqlite:///furniturecatalog.db',
-                       connect_args={'check_same_thread': False})
-# Bind the engine to the metadata of the Base class so that the
-# declaratives can be accessed through a DBSession instance
-Base.metadata.bind = engine
+# Connect to the database, create session
+session = DBConnector().get_session()
 
-DBSession = sessionmaker(bind=engine)
-# A DBSession() instance establishes all conversations with the database
-# and represents a "staging zone" for all the objects loaded into the
-# database session object. Any change made against the objects in the
-# session won't be persisted into the database until you call
-# session.commit(). If you're not happy about the changes, you can
-# revert all of them back to the last commit by calling
-# session.rollback()
-session = DBSession()
+# Instantiate services
+category_service = CategoryService()
+config_service = ConfigService()
 
-
-CLIENT_ID = json.loads(
-    open('client_secrets.json', 'r').read())['web']['client_id']
+# Get Client ID
+CLIENT_ID = config_service.get_setting('client_id')
 
 
 @auth.route('/login')
@@ -48,10 +39,9 @@ def showLogin():
     state = ''.join(random.choice(string.ascii_uppercase + string.digits)
                     for x in range(32))
     login_session['state'] = state
-    # All categories ordered by name
-    categories = session.query(Category).order_by(Category.name).all()
-    # return "The current session state is %s" % login_session['state']
-    return render_template('login.html', STATE=state, categories=categories,
+    return render_template('login.html',
+                           STATE=state,
+                           categories=category_service.get_all_categories(),
                            CLIENT_ID=CLIENT_ID)
 
 

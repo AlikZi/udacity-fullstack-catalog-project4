@@ -2,10 +2,12 @@
 from flask import Flask, render_template, request, flash, Blueprint
 from flask import session as login_session
 from flask import make_response, redirect, jsonify, url_for
-# SQLAlchemy library to access database
-from sqlalchemy import create_engine, asc
-from sqlalchemy.orm import sessionmaker
-from project.models import Base, Category, Product, User
+# Access database
+from project.models import Category, Product, User
+from project.db import DBConnector
+# Services
+from project.services.categories import CategoryService
+from project.services.products import ProductService
 
 import random
 import string
@@ -16,34 +18,25 @@ import requests
 
 jsonAPI = Blueprint('jsonAPI', __name__)
 
-# Connect to Database and create database session
-engine = create_engine('sqlite:///furniturecatalog.db',
-                       connect_args={'check_same_thread': False})
-# Bind the engine to the metadata of the Base class so that the
-# declaratives can be accessed through a DBSession instance
-Base.metadata.bind = engine
+# Connect to the database, create session
+session = DBConnector().get_session()
 
-DBSession = sessionmaker(bind=engine)
-# A DBSession() instance establishes all conversations with the database
-# and represents a "staging zone" for all the objects loaded into the
-# database session object. Any change made against the objects in the
-# session won't be persisted into the database until you call
-# session.commit(). If you're not happy about the changes, you can
-# revert all of them back to the last commit by calling
-# session.rollback()
-session = DBSession()
+# Instantiate services
+category_service = CategoryService()
+product_service = ProductService()
 
 '''
 JSON endpoints
 '''
 
+
 @jsonAPI.route('/catalog/json/')
 def showAllJSON():
     """App route function to show Catalog Data in JSON."""
     # Obtain all categoris
-    categories = session.query(Category).all()
+    categories = category_service.get_all_categories()
     # Obtain all products
-    products = session.query(Product).all()
+    products = product_service.get_all_products()
     return jsonify(categories=[cat.serialize for cat in categories],
                    products=[prod.serialize for prod in products])
 
@@ -52,7 +45,7 @@ def showAllJSON():
 def showCategoriesJSON():
     """App route function to show Categories Data in JSON."""
     # Obtain all categoris
-    categories = session.query(Category).all()
+    categories = category_service.get_all_categories()
     return jsonify(categories=[cat.serialize for cat in categories])
 
 
@@ -60,7 +53,7 @@ def showCategoriesJSON():
 def showProductsJSON():
     """App route function to show Products Data in JSON."""
     # Obtain all products
-    products = session.query(Product).all()
+    products = product_service.get_all_products()
     return jsonify(products=[prod.serialize for prod in products])
 
 
@@ -68,7 +61,7 @@ def showProductsJSON():
 def showCategoryJSON(cat_id):
     """App route function to show selected Category JSON."""
     # Obtain Category
-    category = session.query(Category).filter_by(id=cat_id).one()
+    category = category_service.get_category_by_id(cat_id)
     return jsonify(category=[category.serialize])
 
 
@@ -76,6 +69,5 @@ def showCategoryJSON(cat_id):
 def showProductJSON(prod_id):
     """App route function to show selected Product JSON."""
     # Obtain product
-    product = session.query(Product).filter_by(id=prod_id).one()
+    product = get_product_by_id(prod_id)
     return jsonify(product=[product.serialize])
-
