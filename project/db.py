@@ -6,9 +6,10 @@ from models import Base
 
 class DBConnector():
 
-	engine = create_engine('sqlite:///furniturecatalog.db')
+	engine = create_engine('sqlite:///furniturecatalog.db', 
+		                   connect_args={'check_same_thread': False})
 	Base.metadata.bind = engine
-	
+
 	def __init__(self):
 		self.DBSession = sessionmaker(bind=self.engine)
 		
