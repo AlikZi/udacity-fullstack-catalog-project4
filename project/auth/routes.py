@@ -8,6 +8,7 @@ from project.db import session
 # Services
 from project.services.categories import CategoryService
 from project.services.config import ConfigService
+from project.services.user import UserService
 
 import random
 import string
@@ -26,6 +27,7 @@ auth = Blueprint('auth', __name__)
 # Instantiate services
 category_service = CategoryService()
 config_service = ConfigService()
+user_service = UserService()
 
 # Get Client ID
 CLIENT_ID = config_service.get_setting('client_id')
@@ -153,20 +155,20 @@ def createUser(login_session):
                    'email'])
     session.add(newUser)
     session.commit()
-    user = session.query(User).filter_by(email=login_session['email']).one()
+    user = user_service.get_user_by_email(login_session['email'])
     return user.id
 
 
 def getUserInfo(user_id):
     """Returns User object"""
-    user = session.query(User).filter_by(id=user_id).one()
+    user = user_service.get_user_by_id(user_id)
     return user
 
 
 def getUserID(email):
     """Returns user.id if exists, otherwise returns none."""
     try:
-        user = session.query(User).filter_by(email=email).one()
+        user = user_service.get_user_by_email(email)
         return user.id
     except:
         return None
