@@ -4,7 +4,7 @@ from flask import session as login_session
 from flask import make_response, redirect, jsonify, url_for
 # Access database
 from project.models import Category, Product, User
-from project.db import DBConnector
+from project.db import session
 # Services
 from project.services.categories import CategoryService
 from project.services.auth import AuthService
@@ -20,14 +20,13 @@ import requests
 # Create Blueprint 'categories'
 categories = Blueprint('categories', __name__)
 
-# Connect to the database, create session
-session = DBConnector().get_session()
 
 # Instantiate services
 category_service = CategoryService()
 product_service = ProductService()
 auth_service = AuthService()
 
+DEFAULT_CATEGORY_PRODUCT_NUMBER = 8
 
 @categories.route('/')
 @categories.route('/categories/')
@@ -37,7 +36,7 @@ def showCategories():
                            categories=category_service.get_all_categories(),
                            isLogin=auth_service.is_user_authorized(),
                            latestProducts=(product_service
-                                           .get_latest_products(8)))
+                           .get_latest_products(DEFAULT_CATEGORY_PRODUCT_NUMBER)))
 
 
 @categories.route('/categories/<int:cat_id>/')
@@ -95,7 +94,7 @@ def editCategory(cat_id):
         flash("You need to Log In if you want to edit")
         return redirect('/categories')
     # Get category that is selected to be edited
-    categoryToEdit = session.query(Category).filter_by(id=cat_id).one()
+    categoryToEdit = category_service.get_category_by_id(cat_id)
     # Check if user is Creator, if not inform that he cannot
     # do changes
     if not login_session['email'] == categoryToEdit.user.email:
@@ -133,7 +132,7 @@ def deleteCategory(cat_id):
         flash("You need to Log In if you want to delete the category.")
         return redirect('/categories')
     # Get category that is selected to be edited
-    categoryToDelete = session.query(Category).filter_by(id=cat_id).one()
+    categoryToDelete = category_service.get_category_by_id(cat_id)
     # Check if user is Creator, if not inform that he cannot
     # do changes
     if not login_session['email'] == categoryToDelete.user.email:

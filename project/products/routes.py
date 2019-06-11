@@ -4,7 +4,8 @@ from flask import session as login_session
 from flask import make_response, redirect, jsonify, url_for
 # Access database
 from project.models import Category, Product, User
-from project.db import DBConnector
+from project.db import session
+
 # Services
 from project.services.categories import CategoryService
 from project.services.auth import AuthService
@@ -17,9 +18,6 @@ import json
 import requests
 
 products = Blueprint('products', __name__)
-
-# Connect to the database, create session
-session = DBConnector().get_session()
 
 # Instantiate services
 category_service = CategoryService()
@@ -112,7 +110,7 @@ def editProduct(cat_id, prod_id):
         flash("You need to Log In if you want to edit")
         return redirect('/login')
     # Get Product that user wants to edit
-    productToEdit = session.query(Product).filter_by(id=prod_id).one()
+    productToEdit = product_service.get_product_by_id(prod_id)
     # Check if user is Creator, if not inform that he cannot
     # do changes
     if not login_session['email'] == productToEdit.user.email:
@@ -152,7 +150,7 @@ def deleteProduct(cat_id, prod_id):
         flash("You need to Log In if you want to delete product")
         return redirect('/login')
     # Get the Product that User wants to delete
-    productToDelete = session.query(Product).filter_by(id=prod_id).one()
+    productToDelete = product_service.get_product_by_id(prod_id)
     # Check if user is Creator, if not inform that he cannot
     # do changes
     if not login_session['email'] == productToDelete.user.email:

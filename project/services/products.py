@@ -1,12 +1,12 @@
 from project.models import Category, Product, User
-from project.db import DBConnector
+from project.db import session
 
 
 class ProductService():
 
     def __init__(self):
-        self.session = DBConnector().get_session()
-
+        self.session = session
+        
     def get_product_by_id(self, prod_id):
         """ return selected by its id product """
         return self.session.query(Product).filter_by(id=prod_id).one()

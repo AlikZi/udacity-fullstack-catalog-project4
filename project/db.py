@@ -15,3 +15,6 @@ class DBConnector():
 
     def get_session(self):
         return self.DBSession()
+
+# Connect to the database and create session
+session = DBConnector().get_session()

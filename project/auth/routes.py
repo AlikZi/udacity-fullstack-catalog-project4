@@ -4,7 +4,7 @@ from flask import session as login_session
 from flask import make_response, redirect, jsonify, url_for
 # Access database
 from project.models import Base, Category, Product, User
-from project.db import DBConnector
+from project.db import session
 # Services
 from project.services.categories import CategoryService
 from project.services.config import ConfigService
@@ -22,8 +22,6 @@ from oauth2client.client import FlowExchangeError
 
 auth = Blueprint('auth', __name__)
 
-# Connect to the database, create session
-session = DBConnector().get_session()
 
 # Instantiate services
 category_service = CategoryService()
@@ -32,6 +30,10 @@ config_service = ConfigService()
 # Get Client ID
 CLIENT_ID = config_service.get_setting('client_id')
 
+# Status Code Constansts
+HTTP_STATUS_CODE_OK = 200
+HTTP_STATUS_CODE_UNAUTHORIZED = 401
+HTTP_STATUS_CODE_ERROR = 500
 
 @auth.route('/login')
 def showLogin():
@@ -50,9 +52,7 @@ def googleConnect():
     """Connect via Google Account and fetch User info."""
     # Validate state token
     if request.args.get('state') != login_session['state']:
-        response = make_response(json.dumps('Invalid state parameter.'), 401)
-        response.headers['Content-Type'] = 'application/json'
-        return response
+        make_json_response('Invalid state parameter.', HTTP_STATUS_CODE_UNAUTHORIZED)
     # Obtain authorization code
     code = request.data
 
@@ -62,45 +62,31 @@ def googleConnect():
         oauth_flow.redirect_uri = 'postmessage'
         credentials = oauth_flow.step2_exchange(code)
     except FlowExchangeError:
-        response = make_response(
-            json.dumps('Failed to upgrade the authorization code.'), 401)
-        response.headers['Content-Type'] = 'application/json'
-        return response
+        make_json_response('Invalid state parameter.', HTTP_STATUS_CODE_UNAUTHORIZED)
 
     # Check that the access token is valid.
     access_token = credentials.access_token
-    url = ('https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=%s'
-           % access_token)
+    url = ('https://www.googleapis.com/oauth2/v1/tokeninfo?access_token={}'
+        .format(access_token))
     h = requests.get(url=url)
     result = json.loads(h.text)
     # If there was an error in the access token info, abort.
     if result.get('error') is not None:
-        response = make_response(json.dumps(result.get('error')), 500)
-        response.headers['Content-Type'] = 'application/json'
-        return response
+        make_json_response('error', HTTP_STATUS_CODE_ERROR)
 
     # Verify that the access token is used for the intended user.
     gplus_id = credentials.id_token['sub']
     if result['user_id'] != gplus_id:
-        response = make_response(
-            json.dumps("Token's user ID doesn't match given user ID."), 401)
-        response.headers['Content-Type'] = 'application/json'
-        return response
+        make_json_response('Invalid state parameter.', HTTP_STATUS_CODE_UNAUTHORIZED)
 
     # Verify that the access token is valid for this app.
     if result['issued_to'] != CLIENT_ID:
-        response = make_response(
-            json.dumps("Token's client ID does not match app's."), 401)
-        response.headers['Content-Type'] = 'application/json'
-        return response
+        make_json_response('Invalid state parameter.', HTTP_STATUS_CODE_UNAUTHORIZED)
 
     stored_access_token = login_session.get('access_token')
     stored_gplus_id = login_session.get('gplus_id')
     if stored_access_token is not None and gplus_id == stored_gplus_id:
-        response = make_response(json.dumps('Current user \
-                                            is already connected.'), 200)
-        response.headers['Content-Type'] = 'application/json'
-        return response
+        make_json_response('Current user is already connected.', HTTP_STATUS_CODE_OK)
 
     # Store the access token in the session for later use.
     login_session['access_token'] = credentials.access_token
@@ -113,7 +99,7 @@ def googleConnect():
 
     data = answer.json()
 
-    login_session['username'] = data['name']
+    login_session['username'] = data['email']
     login_session['email'] = data['email']
     # ADD PROVIDER TO LOGIN SESSION
     login_session['provider'] = 'google'
@@ -124,7 +110,7 @@ def googleConnect():
         user_id = createUser(login_session)
     login_session['user_id'] = user_id
     result = "User is authorized!"
-    flash("You are now logged in as %s" % login_session['username'])
+    flash("You are now logged in as {}".format(login_session['username']))
     return result
 
 
@@ -154,6 +140,13 @@ def googleDisconnect():
 
 
 # User Helper Functions
+def make_json_response(data, status):
+    """Makes http response, accepts message and status code"""
+    response = make_response(data, status)
+    response.headers['Content-Type'] = 'application/json'
+    return response
+
+
 def createUser(login_session):
     """Creates new login_session user, returns user.id."""
     newUser = User(name=login_session['username'], email=login_session[

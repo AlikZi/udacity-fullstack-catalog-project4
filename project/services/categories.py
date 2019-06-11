@@ -1,11 +1,11 @@
 from project.models import Category, Product, User
-from project.db import DBConnector
+from project.db import session
 
 
 class CategoryService():
 
     def __init__(self):
-        self.session = DBConnector().get_session()
+        self.session = session
 
     def get_all_categories(self):
         """ returns all categories ordered by name"""

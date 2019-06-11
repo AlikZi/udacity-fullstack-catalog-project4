@@ -2,9 +2,7 @@
 Insert data to the "furniturecatalog.db" database
 '''
 from models import Category, Product, User
-from db import DBConnector
-
-session = DBConnector().get_session()
+from db import session
 
 
 user1 = User(name='Aleksandr Zonis', email='zonis7@gmail.com')
