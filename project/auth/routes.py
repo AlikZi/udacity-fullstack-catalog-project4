@@ -54,7 +54,8 @@ def googleConnect():
     """Connect via Google Account and fetch User info."""
     # Validate state token
     if request.args.get('state') != login_session['state']:
-        make_json_response('Invalid state parameter.', HTTP_STATUS_CODE_UNAUTHORIZED)
+        make_json_response('Invalid state parameter.',
+                            HTTP_STATUS_CODE_UNAUTHORIZED)
     # Obtain authorization code
     code = request.data
 
@@ -64,7 +65,8 @@ def googleConnect():
         oauth_flow.redirect_uri = 'postmessage'
         credentials = oauth_flow.step2_exchange(code)
     except FlowExchangeError:
-        make_json_response('Invalid state parameter.', HTTP_STATUS_CODE_UNAUTHORIZED)
+        make_json_response('Invalid state parameter.',
+                           HTTP_STATUS_CODE_UNAUTHORIZED)
 
     # Check that the access token is valid.
     access_token = credentials.access_token
@@ -79,16 +81,19 @@ def googleConnect():
     # Verify that the access token is used for the intended user.
     gplus_id = credentials.id_token['sub']
     if result['user_id'] != gplus_id:
-        make_json_response('Invalid state parameter.', HTTP_STATUS_CODE_UNAUTHORIZED)
+        make_json_response('Invalid state parameter.',
+                           HTTP_STATUS_CODE_UNAUTHORIZED)
 
     # Verify that the access token is valid for this app.
     if result['issued_to'] != CLIENT_ID:
-        make_json_response('Invalid state parameter.', HTTP_STATUS_CODE_UNAUTHORIZED)
+        make_json_response('Invalid state parameter.',
+                           HTTP_STATUS_CODE_UNAUTHORIZED)
 
     stored_access_token = login_session.get('access_token')
     stored_gplus_id = login_session.get('gplus_id')
     if stored_access_token is not None and gplus_id == stored_gplus_id:
-        make_json_response('Current user is already connected.', HTTP_STATUS_CODE_OK)
+        make_json_response('Current user is already connected.',
+                           HTTP_STATUS_CODE_OK)
 
     # Store the access token in the session for later use.
     login_session['access_token'] = credentials.access_token

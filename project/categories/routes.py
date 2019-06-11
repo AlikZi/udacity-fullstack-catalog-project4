@@ -39,24 +39,24 @@ def showCategories():
                            .get_latest_products(DEFAULT_CATEGORY_PRODUCT_NUMBER)))
 
 
-@categories.route('/categories/<int:cat_id>/')
-def showCategoryProducts(cat_id):
+@categories.route('/categories/<int:category_id>/')
+def showCategoryProducts(category_id):
     """App route function to show Products of the selected Category."""
     isLogin = auth_service.is_user_authorized()
     # Pick category selected by user
-    category = category_service.get_category_by_id(cat_id)
+    category = category_service.get_category_by_id(category_id)
     # Check if user is Creator of Category
     isCreator = False
     if isLogin:
         isCreator = login_session['email'] == category.user.email
     return render_template('category.html',
                            products=(product_service
-                                     .get_products_by_cat_id(cat_id)),
+                                     .get_products_by_category_id(category_id)),
                            categories=category_service.get_all_categories(),
                            category=category,
                            isLogin=isLogin,
                            countProducts=(product_service
-                                          .products_count(cat_id)),
+                                          .products_count(category_id)),
                            isCreator=isCreator)
 
 
@@ -85,16 +85,16 @@ def addCategory():
                                isLogin=auth_service.is_user_authorized())
 
 
-@categories.route('/editcategory/<int:cat_id>/',
+@categories.route('/editcategory/<int:category_id>/',
                   methods=['GET', 'POST'])
-def editCategory(cat_id):
+def editCategory(category_id):
     """App route function to edit existing Category."""
     # If user is not logged in, inform him about it and redirect
     if 'email' not in login_session:
         flash("You need to Log In if you want to edit")
         return redirect('/categories')
     # Get category that is selected to be edited
-    categoryToEdit = category_service.get_category_by_id(cat_id)
+    categoryToEdit = category_service.get_category_by_id(category_id)
     # Check if user is Creator, if not inform that he cannot
     # do changes
     if not login_session['email'] == categoryToEdit.user.email:
@@ -115,7 +115,7 @@ def editCategory(cat_id):
         flash('You successfully \
               updated category to {}'.format(categoryToEdit.name))
         return redirect(url_for('categories.showCategoryProducts',
-                                cat_id=cat_id))
+                                category_id=category_id))
     else:
         return render_template('editcategory.html',
                                categories=(category_service
@@ -124,15 +124,15 @@ def editCategory(cat_id):
                                categoryToEdit=categoryToEdit)
 
 
-@categories.route('/deletecategory/<int:cat_id>/', methods=['GET', 'POST'])
-def deleteCategory(cat_id):
+@categories.route('/deletecategory/<int:category_id>/', methods=['GET', 'POST'])
+def deleteCategory(category_id):
     """App route function to delete existing Category"""
     # If user is not logged in, inform him about it and redirect
     if 'email' not in login_session:
         flash("You need to Log In if you want to delete the category.")
         return redirect('/categories')
     # Get category that is selected to be edited
-    categoryToDelete = category_service.get_category_by_id(cat_id)
+    categoryToDelete = category_service.get_category_by_id(category_id)
     # Check if user is Creator, if not inform that he cannot
     # do changes
     if not login_session['email'] == categoryToDelete.user.email:

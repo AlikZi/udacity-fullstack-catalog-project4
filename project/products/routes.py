@@ -25,14 +25,14 @@ product_service = ProductService()
 auth_service = AuthService()
 
 
-@products.route('/categories/<int:cat_id>/<int:prod_id>/')
-def showProduct(cat_id, prod_id):
+@products.route('/categories/<int:category_id>/<int:product_id>/')
+def showProduct(category_id, product_id):
     """App route function to show selected product."""
     # Check if user is logged in and save the result in isLogin
     isLogin = auth_service.is_user_authorized()
     # Get category that is selected to be shown
-    category = category_service.get_category_by_id(cat_id)
-    product = product_service.get_product_by_id(prod_id)
+    category = category_service.get_category_by_id(category_id)
+    product = product_service.get_product_by_id(product_id)
     # Check if user is Creator of Category or Product
     isCreator = False
     if isLogin:
@@ -93,7 +93,7 @@ def addProduct():
         session.commit()
         flash('New Product {} Successfully Created'.format(newProduct.name))
         return redirect(url_for('categories.showCategoryProducts',
-                                cat_id=newProduct.category_id))
+                                category_id=newProduct.category_id))
     else:
         return render_template('addproduct.html',
                                categories=(category_service
@@ -101,22 +101,22 @@ def addProduct():
                                isLogin=auth_service.is_user_authorized())
 
 
-@products.route('/editproduct/<int:cat_id>/<int:prod_id>/',
+@products.route('/editproduct/<int:category_id>/<int:product_id>/',
                 methods=['GET', 'POST'])
-def editProduct(cat_id, prod_id):
+def editProduct(category_id, product_id):
     """App route function to edit existing Product."""
     # If user is not logged in, inform him about it and redirect
     if 'email' not in login_session:
         flash("You need to Log In if you want to edit")
         return redirect('/login')
     # Get Product that user wants to edit
-    productToEdit = product_service.get_product_by_id(prod_id)
+    productToEdit = product_service.get_product_by_id(product_id)
     # Check if user is Creator, if not inform that he cannot
     # do changes
     if not login_session['email'] == productToEdit.user.email:
         flash("You need to be a Creator of the Product to edit it")
         return redirect(url_for('products.showProduct',
-                                cat_id=cat_id, prod_id=prod_id))
+                                category_id=category_id, product_id=product_id))
     if request.method == 'POST':
         if request.form['name']:
             productToEdit.name = request.form['name']
@@ -130,45 +130,45 @@ def editProduct(cat_id, prod_id):
         session.commit()
         flash('You successfully edited product')
         return redirect(url_for('products.showProduct',
-                                cat_id=cat_id, prod_id=prod_id))
+                                category_id=category_id, product_id=product_id))
     else:
         return render_template('editproduct.html',
                                categories=(category_service
                                            .get_all_categories()),
                                isLogin=auth_service.is_user_authorized(),
                                category=(category_service
-                                         .get_category_by_id(cat_id)),
+                                         .get_category_by_id(category_id)),
                                productToEdit=productToEdit)
 
 
-@products.route('/deleteproduct/<int:cat_id>/<int:prod_id>/',
+@products.route('/deleteproduct/<int:category_id>/<int:product_id>/',
                 methods=['GET', 'POST'])
-def deleteProduct(cat_id, prod_id):
+def deleteProduct(category_id, product_id):
     """App route function to delete existing product."""
     # If user is not logged in, inform him about it and redirect
     if 'email' not in login_session:
         flash("You need to Log In if you want to delete product")
         return redirect('/login')
     # Get the Product that User wants to delete
-    productToDelete = product_service.get_product_by_id(prod_id)
+    productToDelete = product_service.get_product_by_id(product_id)
     # Check if user is Creator, if not inform that he cannot
     # do changes
     if not login_session['email'] == productToDelete.user.email:
         flash("You need to be a Creator of the Product to delete it")
         return redirect(url_for('products.showProduct',
-                                cat_id=cat_id, prod_id=prod_id))
+                                category_id=category_id, product_id=product_id))
     if request.method == 'POST':
         session.delete(productToDelete)
         session.commit()
         flash('You successfully deleted \
               product "{}"'.format(productToDelete.name))
         return redirect(url_for('categories.showCategoryProducts',
-                                cat_id=cat_id))
+                                category_id=category_id))
     else:
         return render_template('deleteproduct.html',
                                categories=(category_service
                                            .get_all_categories()),
                                isLogin=auth_service.is_user_authorized(),
                                category=(category_service
-                                         .get_category_by_id(cat_id)),
+                                         .get_category_by_id(category_id)),
                                productToDelete=productToDelete)
