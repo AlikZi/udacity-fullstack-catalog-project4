@@ -16,7 +16,7 @@
                     <button type="submit" class="btn btn-success mt-3" id="submit" type="submit">
                         Edit
                     </button>
-                    <a href="{{url_for('showProduct', cat_id = productToEdit.category_id, prod_id=productToEdit.id)}}"
+                    <a href="{{url_for('products.showProduct', category_id = productToEdit.category_id, product_id=productToEdit.id)}}"
                         class="btn btn-danger mt-3">Cancel</a>
                 </div>
             </form>

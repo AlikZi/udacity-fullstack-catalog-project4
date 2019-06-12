@@ -19,7 +19,7 @@
         <td class="align-middle text-muted">{{ product.category.name }}</td>
         <td class="align-middle show-large">{{ product.user.name }}</td>
         <td>
-          <a href="{{url_for('showProduct', cat_id=product.category.id, prod_id=product.id )}}" class="btn btn-outline-success">Explore</a>
+          <a href="{{url_for('products.showProduct', category_id=product.category.id, product_id=product.id )}}" class="btn btn-outline-success">Explore</a>
         </td>
       </tr>
       {% endfor %}

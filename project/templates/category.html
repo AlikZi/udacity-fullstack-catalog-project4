@@ -10,7 +10,7 @@
       {% endif %}
     </span>
     {% if isCreator %}
-    <a href="{{url_for('editCategory', cat_id=category.id)}}" class="h6 text-info">edit</a> <a href="{{url_for('deleteCategory', cat_id=category.id)}}"
+    <a href="{{url_for('categories.editCategory', category_id=category.id)}}" class="h6 text-info">edit</a> <a href="{{url_for('categories.deleteCategory', category_id=category.id)}}"
       class="h6 text-info">delete</a>
     {% endif %}
   </h2>
@@ -24,7 +24,7 @@
         <img class="card-img-top img-fluid" src="{{ product.image_url }}" alt="" />
         <div class="card-body">
           <h4 class="card-title">{{ product.name }}</h4>
-          <a href="{{url_for('showProduct', cat_id=category.id, prod_id=product.id )}}" class="btn btn-outline-success">Explore</a>
+          <a href="{{url_for('products.showProduct', category_id=category.id, product_id=product.id )}}" class="btn btn-outline-success">Explore</a>
         </div>
       </div>
     </div>

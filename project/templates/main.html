@@ -72,7 +72,7 @@
           <h2 class="mb-3">Categories</h2>
           <ul class="list-group box-shadow">
             {% for category in categories %}
-            <a href="{{url_for('showCategoryProducts', cat_id=category.id) }}" class="list-group-item text-success">{{
+            <a href="{{url_for('categories.showCategoryProducts', category_id=category.id) }}" class="list-group-item text-success">{{
               category.name }}</a>
             {% endfor %}
           </ul>
